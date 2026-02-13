@@ -1,9 +1,9 @@
-name: Deploy RankFlow Website
+name: Deploy RankFlow Static Website
 
 on:
   push:
     branches:
-      - main  # 當你推送程式碼到 main 分支時觸發
+      - main  # Triggered when you push to the main branch
 
 permissions:
   contents: read
@@ -12,18 +12,21 @@ permissions:
 
 jobs:
   deploy:
+    environment:
+      name: github-pages
+      url: ${{ steps: deployment.outputs.page_url }}
     runs-on: ubuntu-latest
     steps:
-      - name: Checkout Code
+      - name: Checkout Repository
         uses: actions/checkout@v4
 
-      - name: Setup Pages
+      - name: Setup GitHub Pages
         uses: actions/configure-pages@v4
 
-      - name: Upload Artifact
+      - name: Upload Website Files
         uses: actions/upload-pages-artifact@v3
         with:
-          path: '.'  # 部署專案根目錄下的檔案
+          path: '.'  # Uploads all files in the root directory (index.html, etc.)
 
       - name: Deploy to GitHub Pages
         id: deployment
