@@ -3,155 +3,160 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>RankFlow | Professional Roblox API</title>
+    <title>RankFlow | Professional Roblox Group Management API</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/atom-one-dark.min.css">
     <style>
         :root {
-            --bg-color: #0b0e14;
+            --bg-dark: #0d1117;
             --card-bg: #161b22;
-            --accent-color: #7c4dff;
-            --text-color: #adbac7;
-            --white: #ffffff;
+            --accent: #58a6ff; 
+            --text-main: #c9d1d9;
+            --text-dim: #8b949e;
+            --code-bg: #010409;
+            --success: #3fb950;
         }
 
         body {
-            background-color: var(--bg-color);
-            color: var(--text-color);
-            font-family: 'Segoe UI', sans-serif;
+            background-color: var(--bg-dark);
+            color: var(--text-main);
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Helvetica, Arial, sans-serif;
             margin: 0;
             line-height: 1.6;
         }
 
-        /* 導覽列 */
+        /* Navigation */
         nav {
             display: flex;
             justify-content: space-between;
             align-items: center;
-            padding: 20px 10%;
-            background: rgba(13, 17, 23, 0.9);
+            padding: 15px 10%;
+            background: rgba(22, 27, 34, 0.9);
+            border-bottom: 1px solid #30363d;
             position: sticky;
             top: 0;
-            border-bottom: 1px solid #30363d;
+            z-index: 100;
         }
 
-        .logo {
-            font-size: 1.5rem;
-            font-weight: bold;
-            color: var(--white);
-            display: flex;
-            align-items: center;
-            gap: 10px;
-        }
+        .logo { font-size: 1.4rem; font-weight: 700; color: #fff; letter-spacing: 1px; }
+        .nav-links a { color: var(--text-dim); text-decoration: none; margin-left: 25px; transition: 0.3s; font-size: 0.9rem; }
+        .nav-links a:hover { color: var(--accent); }
 
-        nav a {
-            color: var(--text-color);
-            text-decoration: none;
-            margin-left: 20px;
-            transition: 0.3s;
-        }
+        .container { max-width: 1100px; margin: 40px auto; padding: 0 20px; }
 
-        nav a:hover { color: var(--accent-color); }
+        /* Hero Section */
+        .hero { text-align: center; margin-bottom: 60px; }
+        .hero h1 { font-size: 2.5rem; color: #fff; margin-bottom: 10px; }
+        .hero p { color: var(--text-dim); font-size: 1.1rem; }
 
-        /* 主要內容區 */
-        .container { padding: 50px 10%; }
+        /* Documentation Layout */
+        .doc-grid { display: grid; grid-template-columns: 1fr 1.2fr; gap: 40px; }
 
-        .grid {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 40px;
-            margin-top: 40px;
-        }
+        .step-card { background: var(--card-bg); border: 1px solid #30363d; border-radius: 8px; padding: 25px; margin-bottom: 20px; }
+        .step-tag { background: var(--accent); color: #0d1117; padding: 2px 10px; border-radius: 12px; font-weight: bold; font-size: 0.8rem; margin-bottom: 15px; display: inline-block; }
+        
+        /* Code Block Styling */
+        .code-header { background: #21262d; padding: 8px 15px; border-radius: 8px 8px 0 0; display: flex; justify-content: space-between; border: 1px solid #30363d; border-bottom: none; font-size: 0.8rem; }
+        pre { margin: 0; }
+        code { border-radius: 0 0 8px 8px !important; font-size: 0.85rem !important; border: 1px solid #30363d !important; }
 
-        /* 步驟樣式 */
-        .step-item {
-            display: flex;
-            gap: 15px;
-            margin-bottom: 25px;
-        }
-
-        .step-num {
-            background: var(--accent-color);
-            color: white;
-            width: 30px;
-            height: 30px;
-            border-radius: 50%;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            flex-shrink: 0;
-        }
-
-        /* 代碼區塊 */
-        pre {
-            background: #010409;
-            padding: 20px;
-            border-radius: 10px;
-            border: 1px solid #30363d;
-            overflow-x: auto;
-        }
-
-        .btn-buy {
-            background: var(--accent-color);
-            color: white;
-            padding: 12px 25px;
-            border-radius: 5px;
-            text-decoration: none;
-            display: inline-block;
-            margin-top: 20px;
-        }
+        .btn-discord { background: #5865F2; color: white; padding: 12px 30px; border-radius: 5px; text-decoration: none; font-weight: bold; display: inline-block; margin-top: 20px; }
+        .status-dot { color: var(--success); font-weight: bold; }
     </style>
 </head>
 <body>
 
 <nav>
-    <div class="logo">🧬 RankFlow</div>
-    <div>
+    <div class="logo">RANKFLOW API</div>
+    <div class="nav-links">
         <a href="#features">Features</a>
         <a href="#pricing">Pricing</a>
+        <a href="#tutorials">Tutorials</a>
         <a href="#docs">API Docs</a>
-        <a href="https://discord.gg/your-link" style="color: #00ff00;">● Status</a>
+        <a href="#" class="status-dot">● System Online</a>
     </div>
 </nav>
 
 <div class="container">
-    <section id="docs">
-        <h1>🛡️ Getting Started</h1>
-        <div class="grid">
-            <div>
-                <div class="step-item">
-                    <div class="step-num">1</div>
-                    <div>
-                        <strong>Get an API Key</strong>
-                        <p>Purchase a plan from our Discord to get your key.</p>
-                    </div>
-                </div>
-                <div class="step-item">
-                    <div class="step-num">2</div>
-                    <div>
-                        <strong>Activate Service</strong>
-                        <p>Use <code>/setup</code> in Discord with your Group ID.</p>
-                    </div>
-                </div>
-                <a href="https://discord.gg/your-link" class="btn-buy">Buy a License Now</a>
+    <div class="hero">
+        <h1>Seamless Group Management</h1>
+        <p>Automate your Roblox group ranking with a powerful, secure, and fast API.</p>
+    </div>
+
+    <div class="doc-grid">
+        <div class="steps-area">
+            <div class="step-card">
+                <span class="step-tag">Step 1</span>
+                <h3>Obtain Secret Token</h3>
+                <p>Use the <code>/setup</code> command in our Discord server to generate your unique key. Never share this token publicly.</p>
             </div>
-
-            <div>
-                <strong>Quick Start (Lua)</strong>
-                <pre><code class="language-lua">
-local HttpService = game:GetService("HttpService")
-local API_KEY = "your-secret-token" --
-local URL = "https://your-api.railway.app/api/v1/rank/update"
-
-local data = {
-    userId = 123456,
-    action = "promote" --
-}
-
--- Send request
-                </code></pre>
+            <div class="step-card">
+                <span class="step-tag">Step 2</span>
+                <h3>Studio Configuration</h3>
+                <p>Enable <b>HTTP Requests</b> in Roblox Studio via Game Settings → Security.</p>
+            </div>
+            <div class="step-card" style="border-left: 4px solid var(--accent);">
+                <h3>Customer Support</h3>
+                <p>Received a 403 (Forbidden) or 429 (Rate Limit) error? Check our documentation or open a ticket.</p>
+                <a href="https://discord.gg/yourlink" class="btn-discord">Join Discord Support</a>
             </div>
         </div>
-    </section>
+
+        <div class="code-area">
+            <div class="code-header">
+                <span>Roblox Server Script (Integration)</span>
+                <span>Lua</span>
+            </div>
+            <pre><code class="language-lua">-- RankFlow API Integration Example
+local HttpService = game:GetService("HttpService")
+local Players = game:GetService("Players")
+
+-- CONFIGURATION
+local API_URL = "https://rankflow-production-e079.up.railway.app/api/v2/rank/update" 
+local SECRET_TOKEN = "YOUR_TOKEN_HERE" -- Get this via /setup
+local GROUP_ID = 35119105 
+local MIN_RANK = 40
+
+-- API Calling Function
+local function callRankApi(targetId, action)
+    local data = {
+        userId = tostring(targetId),
+        action = action
+    }
+
+    local success, response = pcall(function()
+        return HttpService:RequestAsync({
+            Url = API_URL,
+            Method = "POST",
+            Headers = {
+                ["Content-Type"] = "application/json",
+                ["Authorization"] = SECRET_TOKEN
+            },
+            Body = HttpService:JSONEncode(data)
+        })
+    end)
+
+    if success and response.StatusCode == 200 then
+        print("✅ Ranking Successful!")
+        return true
+    else
+        warn("❌ Request Failed: " .. (response and response.StatusCode or "Error"))
+    end
+    return false
+end
+
+-- Chat Command Example: !promote [username]
+Players.PlayerAdded:Connect(function(player)
+    player.Chatted:Connect(function(msg)
+        if player:GetRankInGroup(GROUP_ID) >= MIN_RANK then
+            local cmd, target = msg:match("^!(%w+)%s+(%S+)$")
+            if cmd == "promote" or cmd == "demote" then
+                -- Handle API logic here...
+            end
+        end
+    end)
+end)</code></pre>
+        </div>
+    </div>
 </div>
 
 <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/highlight.min.js"></script>
