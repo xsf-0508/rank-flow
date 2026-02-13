@@ -14,7 +14,7 @@ jobs:
   deploy:
     environment:
       name: github-pages
-      url: ${{ steps: deployment.outputs.page_url }}
+      url: https://xsf-0508.github.io/rankflowapi/
     runs-on: ubuntu-latest
     steps:
       - name: Checkout Repository
