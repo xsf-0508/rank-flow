@@ -4,6 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>RankFlow | Professional Roblox Group Management API</title>
+    <link rel="icon" href="https://api.kite.onl/v1/assets/myxut82o06ffyxgy">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/atom-one-dark.min.css">
     <style>
         :root {
@@ -42,7 +43,24 @@
             z-index: 1000;
         }
 
-        .logo { font-size: 1.5rem; font-weight: 700; color: #fff; letter-spacing: 1px; display: flex; align-items: center; gap: 10px; }
+        .logo { 
+            font-size: 1.5rem; 
+            font-weight: 700; 
+            color: #fff; 
+            letter-spacing: 1px; 
+            display: flex; 
+            align-items: center; 
+            gap: 12px; /* 圖片和文字的間距 */
+        }
+        
+        .logo img {
+            width: 35px;       /* 貓貓圖片寬度 */
+            height: 35px;      /* 貓貓圖片高度 */
+            border-radius: 50%;/* 讓圖片變圓形 */
+            object-fit: cover; /* 確保圖片不變形 */
+            border: 2px solid var(--accent); /* 加個細邊框更有質感 */
+        }
+
         .logo span { color: var(--accent); }
         
         .nav-links { display: flex; align-items: center; gap: 25px; }
@@ -137,7 +155,11 @@
 <body>
 
 <nav>
-    <div class="logo">🧬 Rank<span>Flow</span></div>
+   
+    <div class="logo">
+        <img src="https://api.kite.onl/v1/assets/myxut82o06ffyxgy" alt="Cat Logo">
+        Rank<span>Flow</span>
+    </div>
     <div class="nav-links">
         <a href="#features">Features</a>
         <a href="#pricing">Pricing</a>
