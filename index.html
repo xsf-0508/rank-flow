@@ -1,0 +1,160 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>RankFlow | Professional Roblox API</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/atom-one-dark.min.css">
+    <style>
+        :root {
+            --bg-color: #0b0e14;
+            --card-bg: #161b22;
+            --accent-color: #7c4dff;
+            --text-color: #adbac7;
+            --white: #ffffff;
+        }
+
+        body {
+            background-color: var(--bg-color);
+            color: var(--text-color);
+            font-family: 'Segoe UI', sans-serif;
+            margin: 0;
+            line-height: 1.6;
+        }
+
+        /* 導覽列 */
+        nav {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 20px 10%;
+            background: rgba(13, 17, 23, 0.9);
+            position: sticky;
+            top: 0;
+            border-bottom: 1px solid #30363d;
+        }
+
+        .logo {
+            font-size: 1.5rem;
+            font-weight: bold;
+            color: var(--white);
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        nav a {
+            color: var(--text-color);
+            text-decoration: none;
+            margin-left: 20px;
+            transition: 0.3s;
+        }
+
+        nav a:hover { color: var(--accent-color); }
+
+        /* 主要內容區 */
+        .container { padding: 50px 10%; }
+
+        .grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 40px;
+            margin-top: 40px;
+        }
+
+        /* 步驟樣式 */
+        .step-item {
+            display: flex;
+            gap: 15px;
+            margin-bottom: 25px;
+        }
+
+        .step-num {
+            background: var(--accent-color);
+            color: white;
+            width: 30px;
+            height: 30px;
+            border-radius: 50%;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            flex-shrink: 0;
+        }
+
+        /* 代碼區塊 */
+        pre {
+            background: #010409;
+            padding: 20px;
+            border-radius: 10px;
+            border: 1px solid #30363d;
+            overflow-x: auto;
+        }
+
+        .btn-buy {
+            background: var(--accent-color);
+            color: white;
+            padding: 12px 25px;
+            border-radius: 5px;
+            text-decoration: none;
+            display: inline-block;
+            margin-top: 20px;
+        }
+    </style>
+</head>
+<body>
+
+<nav>
+    <div class="logo">🧬 RankFlow</div>
+    <div>
+        <a href="#features">Features</a>
+        <a href="#pricing">Pricing</a>
+        <a href="#docs">API Docs</a>
+        <a href="https://discord.gg/your-link" style="color: #00ff00;">● Status</a>
+    </div>
+</nav>
+
+<div class="container">
+    <section id="docs">
+        <h1>🛡️ Getting Started</h1>
+        <div class="grid">
+            <div>
+                <div class="step-item">
+                    <div class="step-num">1</div>
+                    <div>
+                        <strong>Get an API Key</strong>
+                        <p>Purchase a plan from our Discord to get your key.</p>
+                    </div>
+                </div>
+                <div class="step-item">
+                    <div class="step-num">2</div>
+                    <div>
+                        <strong>Activate Service</strong>
+                        <p>Use <code>/setup</code> in Discord with your Group ID.</p>
+                    </div>
+                </div>
+                <a href="https://discord.gg/your-link" class="btn-buy">Buy a License Now</a>
+            </div>
+
+            <div>
+                <strong>Quick Start (Lua)</strong>
+                <pre><code class="language-lua">
+local HttpService = game:GetService("HttpService")
+local API_KEY = "your-secret-token" --
+local URL = "https://your-api.railway.app/api/v1/rank/update"
+
+local data = {
+    userId = 123456,
+    action = "promote" --
+}
+
+-- Send request
+                </code></pre>
+            </div>
+        </div>
+    </section>
+</div>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/highlight.min.js"></script>
+<script>hljs.highlightAll();</script>
+</body>
+</html>
