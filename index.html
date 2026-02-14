@@ -314,57 +314,100 @@
 local HttpService = game:GetService("HttpService")
 local Players = game:GetService("Players")
 
+
 -- CONFIGURATION
--- Ensure this matches your Railway Endpoint
 local API_URL = "https://rankflow-production-e079.up.railway.app/api/v2/rank/update" 
-local SECRET_TOKEN = "YOUR_TOKEN_HERE" -- Get this via /setup command
-local GROUP_ID =   -- User Config
-local MIN_RANK =  -- User Config
+local WEBHOOK_URL = ""
+local SECRET_TOKEN = "" -- Keep this secure!
+local ADMIN_ID = 
+local GROUP_ID = 
+local MIN_RANK = 
+local HttpService = game:GetService("HttpService")
+local Players = game:GetService("Players")
+local TextService = game:GetService("TextService")
+-- Simple debounce table to prevent spam
+local cooldowns = {}
 
--- API Calling Function
-local function callRankApi(targetId, action)
-    local data = {
-        userId = tostring(targetId),
-        action = action
-    }
+local function sendWebhook(adminPlayer, targetName, action)
+	local success, content = pcall(function()
+		-- Filter the message for Discord compliance
+		return TextService:FilterStringAsync(action .. " " .. targetName, adminPlayer.UserId):GetNonChatStringForBroadcastAsync()
+	end)
 
-    local success, response = pcall(function()
-        return HttpService:RequestAsync({
-            Url = API_URL,
-            Method = "POST",
-            Headers = {
-                ["Content-Type"] = "application/json",
-                ["Authorization"] = SECRET_TOKEN
-            },
-            Body = HttpService:JSONEncode(data)
-        })
-    end)
+	local data = {
+		["embeds"] = {{
+			["title"] = "🛠️ Rank Management Log",
+			["fields"] = {
+				{["name"] = "Admin", ["value"] = adminPlayer.Name, ["inline"] = true},
+				{["name"] = "Target", ["value"] = targetName, ["inline"] = true},
+				{["name"] = "Action", ["value"] = action:upper(), ["inline"] = true}
+			},
+			["color"] = action == "promote" and 65280 or 16711680, -- Green for promote, Red for demote
+			["footer"] = {["text"] = "RankFlow System • " .. os.date("%X")}
+		}}
+	}
 
-    if success and response.StatusCode == 200 then
-        print("✅ Ranking Successful!")
-        return true
-    else
-        warn("❌ Request Failed: " .. (response and response.StatusCode or "Error"))
-    end
-    return false
+	pcall(function()
+		HttpService:PostAsync(WEBHOOK_URL, HttpService:JSONEncode(data))
+	end)
 end
 
--- Chat Command Example: !promote [username]
+local function callRankApi(targetId, action)
+	local data = {
+		userId = tostring(targetId),
+		action = action
+	}
+
+	local success, response = pcall(function()
+		return HttpService:RequestAsync({
+			Url = API_URL,
+			Method = "POST",
+			Headers = {
+				["Content-Type"] = "application/json",
+				["Authorization"] = SECRET_TOKEN
+			},
+			Body = HttpService:JSONEncode(data)
+		})
+	end)
+
+	if success and response.StatusCode == 200 then
+		return true
+	else
+		warn("❌ Rank API Error: " .. (response and response.Body or "No response"))
+		return false
+	end
+end
+
 Players.PlayerAdded:Connect(function(player)
-    player.Chatted:Connect(function(msg)
-        if player:GetRankInGroup(GROUP_ID) >= MIN_RANK then
-            local cmd, target = msg:match("^!(%w+)%s+(%S+)$")
-            if cmd == "promote" or cmd == "demote" then
-                local success, targetId = pcall(function()
-                    return Players:GetUserIdFromNameAsync(target)
-                end)
-                
-                if success then
-                    callRankApi(targetId, cmd)
-                end
-            end
-        end
-    end)
+	player.Chatted:Connect(function(msg)
+		-- Check Permissions
+		if player:GetRankInGroup(GROUP_ID) < MIN_RANK and player.UserId ~= ADMIN_ID then return end
+
+		-- Basic Cooldown (5 seconds)
+		if cooldowns[player.UserId] and tick() - cooldowns[player.UserId] < 5 then return end
+
+		local args = string.split(msg, " ")
+		local cmd = args[1]:lower()
+		local targetName = args[2]
+
+		if (cmd == "!promote" or cmd == "!demote") and targetName then
+			cooldowns[player.UserId] = tick()
+
+			local cleanCmd = cmd:sub(2) -- Removes the "!"
+
+			local success, targetUserId = pcall(function()
+				return Players:GetUserIdFromNameAsync(targetName)
+			end)
+
+			if success and targetUserId then
+				local apiSuccess = callRankApi(targetUserId, cleanCmd)
+				if apiSuccess then
+					sendWebhook(player, targetName, cleanCmd)
+					print("Successfully updated rank for " .. targetName)
+				end
+			end
+		end
+	end)
 end)</code></pre>
         </div>
     </div>
