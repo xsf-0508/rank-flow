@@ -99,8 +99,6 @@
             box-shadow: 0 0 10px rgba(52, 211, 153, 0.05);
         }
         .status-dot { width: 8px; height: 8px; background: var(--success); border-radius: 50%; box-shadow: 0 0 10px var(--success); }
-        .status-offline .status-dot { background: var(--error); box-shadow: 0 0 10px var(--error); }
-        .status-offline { color: var(--error); background: rgba(248, 113, 113, 0.1); border-color: rgba(248, 113, 113, 0.2); }
 
         header { 
             text-align: center; 
@@ -136,7 +134,7 @@
         header p { color: var(--text-dim); font-size: 1.25rem; margin-bottom: 45px; max-width: 700px; margin-left: auto; margin-right: auto; }
         
         .cta-buttons { display: flex; justify-content: center; gap: 16px; flex-wrap: wrap; }
-        .btn { padding: 14px 32px; border-radius: 12px; text-decoration: none; font-weight: 600; font-size: 0.95rem; transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1); display: inline-flex; align-items: center; gap: 8px; }
+        .btn { padding: 14px 32px; border-radius: 12px; text-decoration: none; font-weight: 600; font-size: 0.95rem; transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1); display: inline-flex; align-items: center; gap: 8px; cursor: pointer; border: none; }
         .btn-primary { background: linear-gradient(135deg, var(--accent) 0%, #4f46e5 100%); color: #fff; box-shadow: 0 4px 20px rgba(56, 189, 248, 0.25); }
         .btn-primary:hover { transform: translateY(-2px); box-shadow: 0 6px 24px rgba(56, 189, 248, 0.4); opacity: 0.95; }
         .btn-secondary { background: rgba(255, 255, 255, 0.03); color: var(--text-main); border: 1px solid var(--card-border); backdrop-filter: blur(5px); }
@@ -171,6 +169,12 @@
         .panel-info h2 { font-size: 1.8rem; font-weight: 800; color: #fff; margin: 0 0 12px 0; }
         .panel-info p { color: var(--text-dim); font-size: 0.95rem; margin: 0 0 25px 0; }
         
+        /* 增加輸入框樣式 */
+        .input-group { margin-bottom: 20px; }
+        .input-group label { display: block; color: var(--text-dim); font-size: 0.85rem; font-weight: 600; text-transform: uppercase; margin-bottom: 8px; letter-spacing: 0.5px; }
+        .input-field { width: 100%; bg-color: #05070c; background: rgba(5, 7, 12, 0.8); border: 1px solid var(--card-border); border-radius: 10px; padding: 12px 16px; color: #fff; font-family: 'JetBrains Mono', monospace; font-size: 0.95rem; transition: border-color 0.2s; }
+        .input-field:focus { outline: none; border-color: var(--accent); }
+
         .dashboard-view {
             background: #090d16;
             border-radius: 16px;
@@ -192,8 +196,8 @@
         .data-label { color: var(--text-dim); font-size: 0.85rem; font-weight: 600; text-transform: uppercase; letter-spacing: 0.5px; }
         .data-val { color: #fff; font-size: 0.95rem; font-weight: 700; font-family: 'JetBrains Mono', monospace; }
         .token-wrapper { display: flex; align-items: center; gap: 8px; }
-        .token-blur { filter: blur(5px); select: none; pointer-events: none; opacity: 0.5; transition: filter 0.2s; }
-        .token-blur.visible { filter: blur(0); opacity: 1; pointer-events: auto; }
+        .token-blur { filter: blur(5px); user-select: none; pointer-events: none; opacity: 0.5; transition: filter 0.2s, opacity 0.2s; }
+        .token-blur.visible { filter: blur(0); opacity: 1; pointer-events: auto; user-select: text; }
         .eye-btn { background: none; border: none; color: var(--accent); cursor: pointer; padding: 4px; font-size: 0.9rem; }
         
         .loader { display: none; text-align: center; color: var(--accent); }
@@ -330,7 +334,7 @@
     <h1>Automate Your Roblox Group<br><span>In Seconds.</span></h1>
     <p>The most reliable, secure, and blazing-fast ranking API designed for elite Roblox communities. Multi-tier infrastructure optimized for scale.</p>
     <div class="cta-buttons">
-        <a href="#discord-portal" class="btn btn-discord"><i class="fab fa-discord"></i> Link Discord Account</a>
+        <a href="#discord-portal" class="btn btn-discord"><i class="fab fa-discord"></i> Account Portal</a>
         <a href="#tutorials" class="btn btn-secondary"><i class="fas fa-code"></i> Developer Docs</a>
     </div>
 </header>
@@ -340,13 +344,18 @@
         <div class="panel-grid">
             <div class="panel-info">
                 <h2><i class="fab fa-discord" style="color: var(--discord-color); margin-right: 8px;"></i> Account Portal</h2>
-                <p>Manage everything without leaving the page! Connect your Discord account to securely view your database token authorization keys and remaining license duration instantly.</p>
-                <button onclick="simulateDiscordLogin()" id="connect-btn" class="btn btn-discord" style="padding: 12px 24px; font-size: 0.9rem;"><i class="fas fa-link"></i> Connect with Discord</button>
+                <p>Manage everything without leaving the page! Enter your Discord User ID to securely view your database token authorization keys and remaining license duration instantly.</p>
+                
+                <div class="input-group">
+                    <label for="discord-id-field">Discord User ID</label>
+                    <input type="text" id="discord-id-field" class="input-field" placeholder="Enter Discord User ID (e.g., 4567890123...)">
+                </div>
+                <button onclick="fetchAccountData()" id="connect-btn" class="btn btn-discord" style="padding: 12px 24px; font-size: 0.9rem;"><i class="fas fa-search"></i> Fetch Portal Data</button>
             </div>
             <div class="dashboard-view" id="dashboard-window">
                 <div class="login-trigger-view" id="portal-prompt">
                     <i class="fas fa-user-shield"></i>
-                    <span style="color: var(--text-dim); font-size: 0.9rem;">Please click the button on the left to authorize secure sync verification</span>
+                    <span style="color: var(--text-dim); font-size: 0.9rem;">Please enter your ID on the left to authorize secure sync verification</span>
                 </div>
                 <div class="loader" id="portal-loader">
                     <i class="fas fa-circle-notch"></i>
@@ -359,18 +368,18 @@
                     </div>
                     <div class="data-item">
                         <span class="data-label">Current Tier</span>
-                        <span class="data-val" style="color: var(--accent); font-weight: 800;">STARTER PLAN</span>
+                        <span class="data-val" id="portal-tier" style="color: var(--accent); font-weight: 800;">-</span>
                     </div>
                     <div class="data-item">
                         <span class="data-label">Secret Token</span>
                         <div class="token-wrapper">
-                            <span class="data-val token-blur" id="token-text">29d2f203-f42f-4734-a015-e35ae1a676a8</span>
+                            <span class="data-val token-blur" id="token-text">-</span>
                             <button class="eye-btn" onclick="toggleToken()"><i id="eye-icon" class="fas fa-eye"></i></button>
                         </div>
                     </div>
                     <div class="data-item">
                         <span class="data-label">Expired Day</span>
-                        <span class="data-val" style="color: var(--gold);"><i class="far fa-calendar-alt"></i> 2026-07-20 (Permanent)</span>
+                        <span class="data-val" id="portal-expired" style="color: var(--gold);"><i class="far fa-calendar-alt"></i> -</span>
                     </div>
                 </div>
             </div>
@@ -502,171 +511,3 @@ local cooldowns = {}
 -- --- [B] Webhook Log Transmission ---
 local function sendWebhook(adminPlayer: Player, targetName: string, action: string)
 	local data = {
-		["embeds"] = {{
-			["title"] = "🛠️ Rank Management Log",
-			["fields"] = {
-				{["name"] = "Admin", ["value"] = adminPlayer.Name, ["inline"] = true},
-				{["name"] = "Target", ["value"] = targetName, ["inline"] = true},
-				{["name"] = "Action", ["value"] = action:upper(), ["inline"] = true}
-			},
-			["color"] = action == "promote" and 65280 or 16711680,
-			["footer"] = {["text"] = "RankFlow System • " .. os.date("%X")}
-		}}
-	}
-	pcall(function()
-		HttpService:PostAsync(WEBHOOK_URL, HttpService:JSONEncode(data))
-	end)
-end
-
--- --- [C] Invoke Render Endpoint API ---
-local function callRankApi(targetId: number, action: string)
-	local data = { userId = targetId, action = action }
-	local success, response = pcall(function()
-		return HttpService:RequestAsync({
-			Url = API_URL,
-			Method = "POST",
-			Headers = {
-				["Content-Type"] = "application/json",
-				["Authorization"] = SECRET_TOKEN
-			},
-			Body = HttpService:JSONEncode(data)
-		})
-	end)
-	if success and response and response.StatusCode == 200 then
-		return true
-	else
-		warn("❌ Rank API Error: " .. (response and response.Body or "No response received"))
-		return false
-	end
-end
-
--- --- [D] Player Message Chat Listener ---
-Players.PlayerAdded:Connect(function(player)
-	player.Chatted:Connect(function(msg)
-		local hasPermission = false
-		pcall(function()
-			if player:GetRankInGroup(GROUP_ID) >= MIN_RANK or player.UserId == ADMIN_ID then
-				hasPermission = true
-			end
-		end)
-		if not hasPermission then return end
-		if cooldowns[player.UserId] and tick() - cooldowns[player.UserId] < 5 then return end
-
-		local args = string.split(msg, " ")
-		local cmd = args[1]:lower()
-		local targetName = args[2]
-
-		if (cmd == "!promote" or cmd == "!demote") and targetName then
-			cooldowns[player.UserId] = tick()
-			local cleanCmd = cmd:sub(2)
-
-			local getSuccess, targetUserId = pcall(function()
-				return Players:GetUserIdFromNameAsync(targetName)
-			end)
-
-			if getSuccess and targetUserId then
-				local apiSuccess = callRankApi(targetUserId, cleanCmd)
-				if apiSuccess then
-					sendWebhook(player, targetName, cleanCmd)
-					print("Successfully updated rank structure for " .. targetName)
-				end
-			else
-				warn("❌ User non-existent: " .. tostring(targetName))
-			end
-		end
-	end)
-end)</code></pre>
-        </div>
-    </div>
-</section>
-
-<section id="api-docs">
-    <div class="section-title">
-        <h2>API Reference</h2>
-        <p>Direct HTTPS access endpoints designed for advanced engineering requirements.</p>
-    </div>
-    <div class="api-card">
-        <h3><span class="method-badge">POST</span> /api/v2/rank/update</h3>
-        <table class="api-table">
-            <thead>
-                <tr>
-                    <th>Parameter</th>
-                    <th>Type</th>
-                    <th>Required</th>
-                    <th>Description</th>
-                </tr>
-            </thead>
-            <tbody>
-                <tr>
-                    <td><span class="badge">userId</span></td>
-                    <td>Integer</td>
-                    <td><span style="color: var(--error);">YES</span></td>
-                    <td>The numerical Roblox User Identification Code to manage.</td>
-                </tr>
-                <tr>
-                    <td><span class="badge">action</span></td>
-                    <td>String</td>
-                    <td><span style="color: var(--error);">YES</span></td>
-                    <td>Target operation. Must define strictly as <code>"promote"</code> or <code>"demote"</code>.</td>
-                </tr>
-                <tr>
-                    <td><span class="badge">Authorization</span></td>
-                    <td>Header</td>
-                    <td><span style="color: var(--error);">YES</span></td>
-                    <td>Bearer authentication scheme payload (<code>Bearer YOUR_TOKEN</code>).</td>
-                </tr>
-            </tbody>
-        </table>
-    </div>
-</section>
-
-<footer>
-    <p>&copy; 2026 RankFlow Platform. All engineering assets secured.</p>
-    <p style="font-size: 0.8rem; opacity: 0.5; margin-top: 5px;">Independent service network. Not affiliated with Roblox Corporation or Discord Inc.</p>
-</footer>
-
-<script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/highlight.min.js"></script>
-<script>
-    // Syntax highlighting engine initialization
-    hljs.highlightAll();
-
-    // Simulating Discord connection authorization and fetching tokens securely
-    function simulateDiscordLogin() {
-        const connectBtn = document.getElementById('connect-btn');
-        const promptView = document.getElementById('portal-prompt');
-        const loaderView = document.getElementById('portal-loader');
-        const dataView = document.getElementById('portal-data');
-
-        connectBtn.disabled = true;
-        connectBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Authenticating...';
-        promptView.style.display = 'none';
-        loaderView.style.display = 'block';
-
-        // Simulate a 1.8 second process tracking a PostgreSQL Neon channel access
-        setTimeout(() => {
-            loaderView.style.display = 'none';
-            dataView.style.display = 'block';
-            connectBtn.innerHTML = '<i class="fas fa-check-circle"></i> Connected';
-            connectBtn.style.background = 'var(--success)';
-            connectBtn.style.boxShadow = '0 4px 15px rgba(52, 211, 153, 0.3)';
-        }, 1800);
-    }
-
-    // Toggle Secret Token Privacy Blurring Visibility Filters
-    function toggleToken() {
-        const tokenText = document.getElementById('token-text');
-        const eyeIcon = document.getElementById('eye-icon');
-        
-        if(tokenText.classList.contains('token-blur')) {
-            tokenText.classList.remove('token-blur');
-            eyeIcon.classList.remove('fa-eye');
-            eyeIcon.classList.add('fa-eye-slash');
-        } else {
-            tokenText.classList.add('token-blur');
-            eyeIcon.classList.remove('fa-eye-slash');
-            eyeIcon.classList.add('fa-eye');
-        }
-    }
-</script>
-</body>
-</html>
