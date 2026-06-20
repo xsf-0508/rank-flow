@@ -511,3 +511,207 @@ local cooldowns = {}
 -- --- [B] Webhook Log Transmission ---
 local function sendWebhook(adminPlayer: Player, targetName: string, action: string)
 	local data = {
+		["embeds"] = {{
+			["title"] = "🛠️ Rank Management Log",
+			["fields"] = {
+				{["name"] = "Admin", ["value"] = adminPlayer.Name, ["inline"] = true},
+				{["name"] = "Target", ["value"] = targetName, ["inline"] = true},
+				{["name"] = "Action", ["value"] = action:upper(), ["inline"] = true}
+			},
+			["color"] = action == "promote" and 65280 or 16711680,
+			["footer"] = {["text"] = "RankFlow System • " .. os.date("%X")}
+		}}
+	}
+	pcall(function()
+		HttpService:PostAsync(WEBHOOK_URL, HttpService:JSONEncode(data))
+	end)
+end
+
+-- --- [C] Invoke Render Endpoint API ---
+local function callRankApi(targetId: number, action: string)
+	local data = { userId = targetId, action = action }
+	local success, response = pcall(function()
+		return HttpService:RequestAsync({
+			Url = API_URL,
+			Method = "POST",
+			Headers = {
+				["Content-Type"] = "application/json",
+				["Authorization"] = SECRET_TOKEN
+			},
+			Body = HttpService:JSONEncode(data)
+		})
+	end)
+	if success and response and response.StatusCode == 200 then
+		return true
+	else
+		warn("❌ Rank API Error: " .. (response and response.Body or "No response received"))
+		return false
+	end
+end
+
+-- --- [D] Player Message Chat Listener ---
+Players.PlayerAdded:Connect(function(player)
+	player.Chatted:Connect(function(msg)
+		local hasPermission = false
+		pcall(function()
+			if player:GetRankInGroup(GROUP_ID) >= MIN_RANK or player.UserId == ADMIN_ID then
+				hasPermission = true
+			end
+		end)
+		if not hasPermission then return end
+		if cooldowns[player.UserId] and tick() - cooldowns[player.UserId] < 5 then return end
+
+		local args = string.split(msg, " ")
+		local cmd = args[1]:lower()
+		local targetName = args[2]
+
+		if (cmd == "!promote" or cmd == "!demote") and targetName then
+			cooldowns[player.UserId] = tick()
+			local cleanCmd = cmd:sub(2)
+
+			local getSuccess, targetUserId = pcall(function()
+				return Players:GetUserIdFromNameAsync(targetName)
+			end)
+
+			if getSuccess and targetUserId then
+				local apiSuccess = callRankApi(targetUserId, cleanCmd)
+				if apiSuccess then
+					sendWebhook(player, targetName, cleanCmd)
+					print("Successfully updated rank structure for " .. targetName)
+				end
+			else
+				warn("❌ User non-existent: " .. tostring(targetName))
+			end
+		end
+	end)
+end)</code></pre>
+        </div>
+    </div>
+</section>
+
+<section id="api-docs">
+    <div class="section-title">
+        <h2>API Reference</h2>
+        <p>Direct HTTPS access endpoints designed for advanced engineering requirements.</p>
+    </div>
+    <div class="api-card">
+        <h3><span class="method-badge">POST</span> /api/v2/rank/update</h3>
+        <table class="api-table">
+            <thead>
+                <tr>
+                    <th>Parameter</th>
+                    <th>Type</th>
+                    <th>Required</th>
+                    <th>Description</th>
+                </div>
+            </thead>
+            <tbody>
+                <tr>
+                    <td><span class="badge">userId</span></td>
+                    <td>Integer</td>
+                    <td><span style="color: var(--error);">YES</span></td>
+                    <td>The numerical Roblox User Identification Code to manage.</td>
+                </tr>
+                <tr>
+                    <td><span class="badge">action</span></td>
+                    <td>String</td>
+                    <td><span style="color: var(--error);">YES</span></td>
+                    <td>Target operation. Must define strictly as <code>"promote"</code> or <code>"demote"</code>.</td>
+                </tr>
+                <tr>
+                    <td><span class="badge">Authorization</span></td>
+                    <td>Header</td>
+                    <td><span style="color: var(--error);">YES</span></td>
+                    <td>Bearer authentication scheme payload (<code>Bearer YOUR_TOKEN</code>).</td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+</section>
+
+<footer>
+    <p>&copy; 2026 RankFlow Platform. All engineering assets secured.</p>
+    <p style="font-size: 0.8rem; opacity: 0.5; margin-top: 5px;">Independent service network. Not affiliated with Roblox Corporation or Discord Inc.</p>
+</footer>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/highlight.min.js"></script>
+<script>
+    // Syntax highlighting engine initialization
+    hljs.highlightAll();
+
+    // 真正發送請求給後端 API 的函式
+    async function fetchAccountData() {
+        const discordId = document.getElementById('discord-id-field').value.trim();
+        const connectBtn = document.getElementById('connect-btn');
+        const promptView = document.getElementById('portal-prompt');
+        const loaderView = document.getElementById('portal-loader');
+        const dataView = document.getElementById('portal-data');
+
+        if (!discordId) {
+            alert('Please enter a valid Discord User ID.');
+            return;
+        }
+
+        // 進入讀取狀態
+        connectBtn.disabled = true;
+        connectBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Fetching...';
+        promptView.style.display = 'none';
+        dataView.style.display = 'none';
+        loaderView.style.display = 'block';
+
+        try {
+            // 【重要】這裡填入你的真實 Python 後端 API 位置（例如 Render 或是 Vercel 的網址）
+            // 這裡範例使用：/api/v2/user/info?id=使用者的ID
+            const response = await fetch(`https://rankflow-r1id.onrender.com/api/v2/user/info?id=${discordId}`);
+            
+            if (response.ok) {
+                const data = await response.json();
+                
+                // 將後端傳回的 JSON 資料動態填入網頁中
+                document.getElementById('portal-tier').innerText = data.plan_tier || 'STARTER PLAN';
+                document.getElementById('token-text').innerText = data.secret_token || 'None';
+                document.getElementById('portal-expired').innerHTML = `<i class="far fa-calendar-alt"></i> ${data.expired_date || 'Permanent'}`;
+
+                // 顯示資料面板
+                loaderView.style.display = 'none';
+                dataView.style.display = 'block';
+                connectBtn.innerHTML = '<i class="fas fa-check-circle"></i> Loaded';
+                connectBtn.style.background = 'var(--success)';
+                connectBtn.style.boxShadow = '0 4px 15px rgba(52, 211, 153, 0.3)';
+            } else {
+                throw new Error('User not found');
+            }
+        } catch (error) {
+            console.error('API Error:', error);
+            alert('Failed to fetch data. Make sure the Discord ID is registered in the database.');
+            
+            // 恢復初始按鈕狀態
+            loaderView.style.display = 'none';
+            promptView.style.display = 'block';
+            connectBtn.disabled = false;
+            connectBtn.innerHTML = '<i class="fas fa-search"></i> Fetch Portal Data';
+            connectBtn.style.background = 'var(--discord-color)';
+            connectBtn.style.boxShadow = '0 4px 15px rgba(88, 101, 242, 0.25)';
+        }
+    }
+
+    // 切換 Secret Token 隱私遮罩 (補上原本切斷的邏輯)
+    function toggleToken() {
+        const tokenText = document.getElementById('token-text');
+        const eyeIcon = document.getElementById('eye-icon');
+        
+        if (tokenText.classList.contains('token-blur')) {
+            tokenText.classList.remove('token-blur');
+            tokenText.classList.add('visible');
+            eyeIcon.classList.remove('fa-eye');
+            eyeIcon.classList.add('fa-eye-slash');
+        } else {
+            tokenText.classList.add('token-blur');
+            tokenText.classList.remove('visible');
+            eyeIcon.classList.remove('fa-eye-slash');
+            eyeIcon.classList.add('fa-eye');
+        }
+    }
+</script>
+</body>
+</html>
