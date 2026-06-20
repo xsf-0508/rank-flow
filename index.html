@@ -3,8 +3,8 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-	<meta name="description" content="RankFlow API | Professional Roblox Group Management API">
-	<meta name="keywords" content="RankFlow, API, Roblox">
+    <meta name="description" content="RankFlow API | Professional Roblox Group Management API">
+    <meta name="keywords" content="RankFlow, API, Roblox">
     <title>RankFlow | Next-Gen Roblox Group Automation Platform</title>
     <link rel="icon" href="https://api.kite.onl/v1/assets/myxut82o06ffyxgy">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/atom-one-dark.min.css">
@@ -33,7 +33,6 @@
 
         body {
             background-color: var(--bg-dark);
-            /* 現代科技感的科技網格背景 */
             background-image: 
                 linear-gradient(rgba(56, 189, 248, 0.03) 1px, transparent 1px),
                 linear-gradient(90deg, rgba(56, 189, 248, 0.03) 1px, transparent 1px);
@@ -45,7 +44,6 @@
             overflow-x: hidden;
         }
 
-        /* --- 頂級毛玻璃導航欄 --- */
         nav {
             display: flex;
             justify-content: space-between;
@@ -104,7 +102,6 @@
         .status-offline .status-dot { background: var(--error); box-shadow: 0 0 10px var(--error); }
         .status-offline { color: var(--error); background: rgba(248, 113, 113, 0.1); border-color: rgba(248, 113, 113, 0.2); }
 
-        /* --- 奢華賽博龐克 Hero 區 --- */
         header { 
             text-align: center; 
             padding: 140px 20px 100px 20px; 
@@ -147,7 +144,6 @@
         .btn-discord { background: var(--discord-color); color: #fff; box-shadow: 0 4px 15px rgba(88, 101, 242, 0.25); }
         .btn-discord:hover { background: var(--discord-hover); transform: translateY(-2px); box-shadow: 0 6px 20px rgba(88, 101, 242, 0.4); }
 
-        /* --- 新增：🔥 超強 Discord 雲端控制台面板 --- */
         .discord-section {
             max-width: 1000px;
             margin: -20px auto 80px auto;
@@ -175,7 +171,6 @@
         .panel-info h2 { font-size: 1.8rem; font-weight: 800; color: #fff; margin: 0 0 12px 0; }
         .panel-info p { color: var(--text-dim); font-size: 0.95rem; margin: 0 0 25px 0; }
         
-        /* 儀表板視窗 */
         .dashboard-view {
             background: #090d16;
             border-radius: 16px;
@@ -189,7 +184,6 @@
         .login-trigger-view { text-align: center; }
         .login-trigger-view i { font-size: 2.5rem; color: var(--discord-color); margin-bottom: 15px; display: block; }
         
-        /* 資料顯示欄位 */
         .data-item {
             display: flex; justify-content: space-between; align-items: center;
             padding: 12px 0; border-bottom: 1px solid rgba(255, 255, 255, 0.05);
@@ -202,18 +196,15 @@
         .token-blur.visible { filter: blur(0); opacity: 1; pointer-events: auto; }
         .eye-btn { background: none; border: none; color: var(--accent); cursor: pointer; padding: 4px; font-size: 0.9rem; }
         
-        /* 載入動畫 */
         .loader { display: none; text-align: center; color: var(--accent); }
         .loader i { font-size: 2rem; animation: spin 1s linear infinite; }
         @keyframes spin { 100% { transform: rotate(360deg); } }
 
-        /* --- 各區塊通用樣式 --- */
         section { padding: 90px 8%; border-top: 1px solid var(--card-border); position: relative; }
         .section-title { text-align: center; margin-bottom: 60px; }
         .section-title h2 { font-size: 2.2rem; font-weight: 800; color: #fff; margin-bottom: 12px; letter-spacing: -0.5px; }
         .section-title p { color: var(--text-dim); font-size: 1.05rem; }
 
-        /* --- 特色功能網格 --- */
         .features-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 30px; }
         .feature-card { 
             background: var(--card-bg); 
@@ -232,7 +223,6 @@
         .feature-card h3 { font-size: 1.25rem; font-weight: 700; color: #fff; margin: 0 0 12px 0; }
         .feature-card p { color: var(--text-dim); font-size: 0.95rem; margin: 0; line-height: 1.6; }
 
-        /* --- 價格方案區 --- */
         .pricing-grid {
             display: grid;
             grid-template-columns: repeat(auto-fit, minmax(310px, 1fr));
@@ -282,7 +272,6 @@
         .features-list li i.fa-check { color: var(--success); }
         .features-list li i.fa-xmark { color: var(--text-dim); opacity: 0.4; }
 
-        /* --- 開發文件與代碼視窗 --- */
         .doc-layout { display: grid; grid-template-columns: 1fr 1.4fr; gap: 40px; align-items: start; }
         
         .step-list { display: flex; flex-direction: column; gap: 16px; }
@@ -299,7 +288,6 @@
         pre { margin: 0; padding: 15px; max-height: 520px; overflow-y: auto; }
         code { font-family: 'JetBrains Mono', monospace !important; font-size: 0.85rem !important; }
 
-        /* --- API 參考資料表 --- */
         .api-card { background: var(--card-bg); border: 1px solid var(--card-border); border-radius: 20px; padding: 35px; overflow-x: auto; }
         .api-card h3 { color: #fff; margin: 0 0 25px 0; font-size: 1.3rem; font-weight: 700; display: flex; align-items: center; gap: 10px; }
         .method-badge { background: rgba(56, 189, 248, 0.15); color: var(--accent); border: 1px solid rgba(56, 189, 248, 0.3); padding: 4px 10px; border-radius: 8px; font-size: 0.85rem; font-weight: 700; font-family: 'JetBrains Mono', monospace; }
@@ -309,7 +297,6 @@
         .api-table th { color: var(--text-dim); font-size: 0.85rem; font-weight: 600; text-transform: uppercase; letter-spacing: 0.5px; }
         .badge { background: rgba(255, 255, 255, 0.05); color: #fff; padding: 4px 8px; border-radius: 6px; font-size: 0.8rem; font-family: 'JetBrains Mono', monospace; border: 1px solid rgba(255, 255, 255, 0.08); }
 
-        /* --- 頁尾 --- */
         footer { padding: 50px 8% 40px 8%; border-top: 1px solid var(--card-border); text-align: center; color: var(--text-dim); font-size: 0.9rem; }
         footer p { margin: 4px 0; }
         
@@ -353,17 +340,17 @@
         <div class="panel-grid">
             <div class="panel-info">
                 <h2><i class="fab fa-discord" style="color: var(--discord-color); margin-right: 8px;"></i> Account Portal</h2>
-                <p>無需離開網頁！直接連結你的 Discord 帳號，一鍵安全查詢你當前的內網授權金鑰以及剩餘有效天數。</p>
+                <p>Manage everything without leaving the page! Connect your Discord account to securely view your database token authorization keys and remaining license duration instantly.</p>
                 <button onclick="simulateDiscordLogin()" id="connect-btn" class="btn btn-discord" style="padding: 12px 24px; font-size: 0.9rem;"><i class="fas fa-link"></i> Connect with Discord</button>
             </div>
             <div class="dashboard-view" id="dashboard-window">
                 <div class="login-trigger-view" id="portal-prompt">
                     <i class="fas fa-user-shield"></i>
-                    <span style="color: var(--text-dim); font-size: 0.9rem;">請點擊左側按鈕授權進行安全連動驗證</span>
+                    <span style="color: var(--text-dim); font-size: 0.9rem;">Please click the button on the left to authorize secure sync verification</span>
                 </div>
                 <div class="loader" id="portal-loader">
                     <i class="fas fa-circle-notch"></i>
-                    <p style="margin-top: 10px; font-size: 0.9rem; color: var(--text-dim);">正在安全讀取 Neon 資料庫通道...</p>
+                    <p style="margin-top: 10px; font-size: 0.9rem; color: var(--text-dim);">Securely fetching database streams from Neon PostgreSQL...</p>
                 </div>
                 <div id="portal-data" style="display: none;">
                     <div class="data-item">
@@ -501,18 +488,18 @@
 local HttpService = game:GetService("HttpService")
 local Players = game:GetService("Players")
 
--- --- [A] 參數設定區 ---
+-- --- [A] Parameter Settings Configuration ---
 local API_URL = "https://rankflow-r1id.onrender.com/api/v2/rank/update" 
 local WEBHOOK_URL = "YOUR_DISCORD_WEBHOOK_HERE"
-local SECRET_TOKEN = "Bearer YOUR_SECRET_TOKEN_HERE" -- 請確保加上 "Bearer "
+local SECRET_TOKEN = "OUR_SECRET_TOKEN_HERE" -- Please ensure "Bearer " prefix is preserved if required by backend
 
-local ADMIN_ID = 2982614444 -- 最高備用管理權限 ID
-local GROUP_ID = 35119105   -- 你的群組 ID
-local MIN_RANK = 50         -- 執行權限最低階級
+local ADMIN_ID =  -- Alternative administrative fall-back User ID
+local GROUP_ID =    -- Your Roblox Group ID
+local MIN_RANK =           -- Minimum rank numeric threshold required for command execution
 
 local cooldowns = {}
 
--- --- [B] Webhook 日誌發送 ---
+-- --- [B] Webhook Log Transmission ---
 local function sendWebhook(adminPlayer: Player, targetName: string, action: string)
 	local data = {
 		["embeds"] = {{
@@ -531,7 +518,7 @@ local function sendWebhook(adminPlayer: Player, targetName: string, action: stri
 	end)
 end
 
--- --- [C] 呼叫 Render API ---
+-- --- [C] Invoke Render Endpoint API ---
 local function callRankApi(targetId: number, action: string)
 	local data = { userId = targetId, action = action }
 	local success, response = pcall(function()
@@ -548,12 +535,12 @@ local function callRankApi(targetId: number, action: string)
 	if success and response and response.StatusCode == 200 then
 		return true
 	else
-		warn("❌ Rank API Error: " .. (response and response.Body or "No response"))
+		warn("❌ Rank API Error: " .. (response and response.Body or "No response received"))
 		return false
 	end
 end
 
--- --- [D] 玩家聊天監聽 ---
+-- --- [D] Player Message Chat Listener ---
 Players.PlayerAdded:Connect(function(player)
 	player.Chatted:Connect(function(msg)
 		local hasPermission = false
@@ -581,7 +568,7 @@ Players.PlayerAdded:Connect(function(player)
 				local apiSuccess = callRankApi(targetUserId, cleanCmd)
 				if apiSuccess then
 					sendWebhook(player, targetName, cleanCmd)
-					print("Successfully updated rank for " .. targetName)
+					print("Successfully updated rank structure for " .. targetName)
 				end
 			else
 				warn("❌ User non-existent: " .. tostring(targetName))
@@ -640,10 +627,10 @@ end)</code></pre>
 
 <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/highlight.min.js"></script>
 <script>
-    // 程式碼高亮初始化
+    // Syntax highlighting engine initialization
     hljs.highlightAll();
 
-    // 模擬 Discord 連動帳號與撈取 Token 的前端邏輯
+    // Simulating Discord connection authorization and fetching tokens securely
     function simulateDiscordLogin() {
         const connectBtn = document.getElementById('connect-btn');
         const promptView = document.getElementById('portal-prompt');
@@ -655,7 +642,7 @@ end)</code></pre>
         promptView.style.display = 'none';
         loaderView.style.display = 'block';
 
-        // 模擬 1.8 秒後讀取完 Neon PostgreSQL 資料庫
+        // Simulate a 1.8 second process tracking a PostgreSQL Neon channel access
         setTimeout(() => {
             loaderView.style.display = 'none';
             dataView.style.display = 'block';
@@ -665,7 +652,7 @@ end)</code></pre>
         }, 1800);
     }
 
-    // 切換 Token 隱私遮罩
+    // Toggle Secret Token Privacy Blurring Visibility Filters
     function toggleToken() {
         const tokenText = document.getElementById('token-text');
         const eyeIcon = document.getElementById('eye-icon');
@@ -680,33 +667,6 @@ end)</code></pre>
             eyeIcon.classList.add('fa-eye');
         }
     }
-
-    // 系統在線健康檢查
-    const statusBadge = document.getElementById('status-indicator');
-    const apiUrl = "https://rankflow-r1id.onrender.com/api/v2/rank/update";
-
-    async function checkStatus() {
-        try {
-            const response = await fetch(apiUrl, { method: 'OPTIONS' }); 
-            if(response.status >= 200 && response.status < 600) {
-                setStatus(true);
-            }
-        } catch (error) {
-            setStatus(true); // 即使跨域 CORS 被擋住，由於我們打通了，UI預設維持亮綠燈
-        }
-    }
-
-    function setStatus(isOnline) {
-        if (!isOnline) {
-            statusBadge.innerHTML = '<div class="status-dot"></div> System Offline';
-            statusBadge.classList.add('status-offline');
-        } else {
-            statusBadge.innerHTML = '<div class="status-dot"></div> System Online';
-            statusBadge.classList.remove('status-offline');
-        }
-    }
-    checkStatus();
 </script>
-
 </body>
 </html>
