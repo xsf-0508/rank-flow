@@ -392,8 +392,251 @@
     </div>
 </div>
 
+<section id="features">
+    <div class="section-title">
+        <h2>Why RankFlow?</h2>
+        <p>Engineered for maximum reliability, extreme speed, and hardened database structure.</p>
+    </div>
+    <div class="features-grid">
+        <div class="feature-card">
+            <div class="icon-box"><i class="fas fa-bolt"></i></div>
+            <h3>Instant Execution</h3>
+            <p>Rank alterations are fully updated and synchronized to Roblox servers in milliseconds via our persistent API pool.</p>
+        </div>
+        <div class="feature-card">
+            <div class="icon-box"><i class="fas fa-shield-halved"></i></div>
+            <h3>Secure & Private</h3>
+            <p>All sensitive tokens are fully hashed. Fully protected against database failures with advanced fail-safe pings.</p>
+        </div>
+        <div class="feature-card">
+            <div class="icon-box"><i class="fas fa-chart-line"></i></div>
+            <h3>High Rate Limits</h3>
+            <p>Supports up to 100 requests per minute. Built flawlessly to meet the needs of hyper-active cafes and military clans.</p>
+        </div>
+    </div>
+</section>
+
+<section id="pricing">
+    <div class="section-title">
+        <h2>Choose Your Plan</h2>
+        <p>Enterprise-grade scaling suitable for communities of any magnitude.</p>
+    </div>
+    
+    <div class="pricing-grid">
+        <div class="pricing-card">
+            <h3>Starter</h3>
+            <div class="price">Free</div>
+            <p class="plan-desc">Perfect for small groups & developers</p>
+            <ul class="features-list">
+                <li><i class="fas fa-check"></i> 2 Requests / Minute limit</li>
+                <li><i class="fas fa-check"></i> Neon PostgreSQL Data Store</li>
+                <li><i class="fas fa-xmark"></i> Advanced Rate Limiting Customization</li>
+                <li><i class="fas fa-xmark"></i> Dedicated Support Access</li>
+            </ul>
+            <a href="https://discord.gg/vGXcBTDT3u" target="_blank" class="btn btn-secondary" style="justify-content: center;">Get Started</a>
+        </div>
+
+        <div class="pricing-card popular">
+            <span class="popular-badge">Most Popular</span>
+            <h3>Standard</h3>
+            <div class="price">150 Robux<span> / month</span></div>
+            <p class="plan-desc">Tailored perfectly for growing servers</p>
+            <ul class="features-list">
+                <li><i class="fas fa-check"></i> Unlimited Rank Modifications</li>
+                <li><i class="fas fa-check"></i> 25 Requests / Minute threshold</li>
+                <li><i class="fas fa-check"></i> Webhook Logger Integration</li>
+                <li><i class="fas fa-check"></i> Priority Ticket Support</li>
+            </ul>
+            <a href="https://discord.gg/vGXcBTDT3u" target="_blank" class="btn btn-primary" style="justify-content: center;">Purchase Plan</a>
+        </div>
+
+        <div class="pricing-card enterprise">
+            <span class="enterprise-badge">High Tier</span>
+            <h3>Enterprise</h3>
+            <div class="price">400 Robux<span> / month</span></div>
+            <p class="plan-desc">For massive gaming communities</p>
+            <ul class="features-list">
+                <li><i class="fas fa-check"></i> Unlimited Rank Modifications</li>
+                <li><i class="fas fa-check"></i> 100 Requests / Minute capacity</li>
+                <li><i class="fas fa-check"></i> Dedicated Account Manager</li>
+                <li><i class="fas fa-check"></i> Custom API Branding & Logs</li>
+            </ul>
+            <a href="https://discord.gg/vGXcBTDT3u" target="_blank" class="btn btn-secondary" style="justify-content: center; border-color: var(--gold); color: var(--gold);">Contact Sales</a>
+        </div>
+    </div>
+</section>
+
+<section id="tutorials">
+    <div class="section-title">
+        <h2>Easy Integration</h2>
+        <p>Plug-and-play setup. Copy, paste, and run your command flawlessly.</p>
+    </div>
+    
+    <div class="doc-layout">
+        <div class="step-list">
+            <div class="step-item">
+                <span class="step-badge">Step 1</span>
+                <h3>Acquire Secret Key</h3>
+                <p>Open a ticket inside Discord to grab your GenKey, then execute <code>/setup</code> to claim your authorized <b>Secret Token</b>.</p>
+            </div>
+            <div class="step-item">
+                <span class="step-badge">Step 2</span>
+                <h3>Enable Studio Network</h3>
+                <p>Navigate to Roblox Studio Game Settings > Security, and toggle <b>Allow HTTP Requests</b> to True.</p>
+            </div>
+            <div class="step-item">
+                <span class="step-badge">Step 3</span>
+                <h3>Deploy Handler</h3>
+                <p>Create a <code>ServerScript</code> in ServerScriptService and paste the production code seamlessly.</p>
+            </div>
+        </div>
+
+        <div class="code-window">
+            <div class="window-header">
+                <div class="window-dots">
+                    <div class="dot dot-red"></div><div class="dot dot-yellow"></div><div class="dot dot-green"></div>
+                </div>
+                <span style="font-family: 'JetBrains Mono';">ServerScriptService/RankHandler.lua</span>
+            </div>
+            <pre><code class="language-lua">--!strict
+local HttpService = game:GetService("HttpService")
+local Players = game:GetService("Players")
+
+-- --- [A] Parameter Settings Configuration ---
+local API_URL = "https://rankflow-r1id.onrender.com/api/v2/rank/update" 
+local WEBHOOK_URL = "YOUR_DISCORD_WEBHOOK_HERE"
+local SECRET_TOKEN = "OUR_SECRET_TOKEN_HERE" 
+
+local ADMIN_ID =  -- Alternative administrative fall-back User ID
+local GROUP_ID =    -- Your Roblox Group ID
+local MIN_RANK =           -- Minimum rank numeric threshold required for command execution
+
+local cooldowns = {}
+
+-- --- [B] Webhook Log Transmission ---
+local function sendWebhook(adminPlayer: Player, targetName: string, action: string)
+	local data = {
+		["embeds"] = {{
+			["title"] = "🛠️ Rank Management Log",
+			["fields"] = {
+				{["name"] = "Admin", ["value"] = adminPlayer.Name, ["inline"] = true},
+				{["name"] = "Target", ["value"] = targetName, ["inline"] = true},
+				{["name"] = "Action", ["value"] = action:upper(), ["inline"] = true}
+			},
+			["color"] = action == "promote" and 65280 or 16711680,
+			["footer"] = {["text"] = "RankFlow System • " .. os.date("%X")}
+		}}
+	}
+	pcall(function()
+		HttpService:PostAsync(WEBHOOK_URL, HttpService:JSONEncode(data))
+	end)
+end
+
+-- --- [C] Invoke Render Endpoint API ---
+local function callRankApi(targetId: number, action: string)
+	local data = { userId = targetId, action = action }
+	local success, response = pcall(function()
+		return HttpService:RequestAsync({
+			Url = API_URL,
+			Method = "POST",
+			Headers = {
+				["Content-Type"] = "application/json",
+				["Authorization"] = SECRET_TOKEN
+			},
+			Body = HttpService:JSONEncode(data)
+		})
+	end)
+	if success and response and response.StatusCode == 200 then
+		return true
+	else
+		warn("❌ Rank API Error: " .. (response and response.Body or "No response received"))
+		return false
+	end
+end
+
+-- --- [D] Player Message Chat Listener ---
+Players.PlayerAdded:Connect(function(player)
+	player.Chatted:Connect(function(msg)
+		local hasPermission = false
+		pcall(function()
+			if player:GetRankInGroup(GROUP_ID) >= MIN_RANK or player.UserId == ADMIN_ID then
+				hasPermission = true
+			end
+		end)
+		if not hasPermission then return end
+		if cooldowns[player.UserId] and tick() - cooldowns[player.UserId] < 5 then return end
+
+		local args = string.split(msg, " ")
+		local cmd = args[1]:lower()
+		local targetName = args[2]
+
+		if (cmd == "!promote" or cmd == "!demote") and targetName then
+			cooldowns[player.UserId] = tick()
+			local cleanCmd = cmd:sub(2)
+
+			local getSuccess, targetUserId = pcall(function()
+				return Players:GetUserIdFromNameAsync(targetName)
+			end)
+
+			if getSuccess and targetUserId then
+				local apiSuccess = callRankApi(targetUserId, cleanCmd)
+				if apiSuccess then
+					sendWebhook(player, targetName, cleanCmd)
+					print("Successfully updated rank structure for " .. targetName)
+				end
+			else
+				warn("❌ User non-existent: " .. tostring(targetName))
+			end
+		end
+	end)
+end)</code></pre>
+        </div>
+    </div>
+</section>
+
+<section id="api-docs">
+    <div class="section-title">
+        <h2>API Reference</h2>
+        <p>Direct HTTPS access endpoints designed for advanced engineering requirements.</p>
+    </div>
+    <div class="api-card">
+        <h3><span class="method-badge">POST</span> /api/v2/rank/update</h3>
+        <table class="api-table">
+            <thead>
+                <tr>
+                    <th>Parameter</th>
+                    <th>Type</th>
+                    <th>Required</th>
+                    <th>Description</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td><span class="badge">userId</span></td>
+                    <td>Integer</td>
+                    <td><span style="color: var(--error);">YES</span></td>
+                    <td>The numerical Roblox User Identification Code to manage.</td>
+                </tr>
+                <tr>
+                    <td><span class="badge">action</span></td>
+                    <td>String</td>
+                    <td><span style="color: var(--error);">YES</span></td>
+                    <td>Target operation. Must define strictly as <code>"promote"</code> or <code>"demote"</code>.</td>
+                </tr>
+                <tr>
+                    <td><span class="badge">Authorization</span></td>
+                    <td>Header</td>
+                    <td><span style="color: var(--error);">YES</span></td>
+                    <td>Bearer authentication scheme payload (<code>Bearer YOUR_TOKEN</code>).</td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+</section>
+
 <footer>
     <p>&copy; 2026 RankFlow Platform. All engineering assets secured.</p>
+    <p style="font-size: 0.8rem; opacity: 0.5; margin-top: 5px;">Independent service network. Not affiliated with Roblox Corporation or Discord Inc.</p>
 </footer>
 
 <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/highlight.min.js"></script>
@@ -405,14 +648,14 @@
     // 【核心修正】真實非同步對接後端 API 函數
     async function fetchAccountData() {
         const discordId = document.getElementById('discord-id-field').value.trim();
-        const secretToken = document.getElementById('portal-auth-token').value.trim();
+        const authToken = document.getElementById('portal-auth-token').value.trim();
         
         const connectBtn = document.getElementById('connect-btn');
         const promptView = document.getElementById('portal-prompt');
         const loaderView = document.getElementById('portal-loader');
         const dataView = document.getElementById('portal-data');
 
-        if (!discordId || !secretToken) {
+        if (!discordId || !authToken) {
             alert('Please enter both Discord User ID and Secret Token.');
             return;
         }
@@ -435,7 +678,7 @@
                 },
                 body: JSON.stringify({ 
                     discord_id: discordId, 
-                    secret_token: secretToken 
+                    secret_token: authToken 
                 })
             });
 
@@ -447,21 +690,12 @@
             // 讀取後端從資料庫捞出來的真實 JSON
             const resData = await response.json(); 
 
-            /* 💡 預期後端回傳結構需對應你的 PostgreSQL 欄位名稱，例如：
-              {
-                 "discord_id": "952175146255417384",
-                 "secret_token": "29d2f203-f42f-4734-a015-e35ae1a676a8",
-                 "tier": "STARTER",
-                 "expiry_date": "2026-07-20 12:13:02"  // 或為 null / "Permanent"
-              }
-            */
-
-            // 2. 渲染真實數據（❌ 絕不加任何 Bearer 前綴，完全還原資料庫原樣）
+            // 2. 渲染真實數據
             const displayTier = resData.tier ? `${resData.tier.toUpperCase()} PLAN` : "STARTER PLAN";
             document.getElementById('portal-tier').innerText = displayTier;
             
-            // 🔒 安全修正：直接使用使用者輸入的 secretToken，不要依賴後端回傳敏感資料
-            document.getElementById('token-text').innerText = secretToken;
+            // 🔒 安全修正：直接使用使用者輸入的 authToken，不要依賴後端回傳敏感資料，也沒有 Bearer
+            document.getElementById('token-text').innerText = authToken;
 
             // 3. 處理到期日格式化顯示
             const expiryTextField = document.getElementById('portal-expired');
