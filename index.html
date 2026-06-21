@@ -1,431 +1,159 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="zh-TW">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta name="description" content="RankFlow API | Professional Roblox Group Management API">
-    <meta name="keywords" content="RankFlow, API, Roblox">
-    <title>RankFlow | Next-Gen Roblox Group Automation Platform</title>
-    <link rel="icon" href="https://api.kite.onl/v1/assets/myxut82o06ffyxgy">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/atom-one-dark.min.css">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
-    
+    <title>RankFlow | Client Portal</title>
     <style>
-        :root {
-            --bg-dark: #080b10;
-            --bg-grid: #0d131f;
-            --card-bg: rgba(17, 24, 39, 0.7);
-            --card-border: rgba(255, 255, 255, 0.08);
-            --accent-glow: rgba(56, 189, 248, 0.15);
-            --accent: #38bdf8; 
-            --accent-hover: #0ea5e9;
-            --text-main: #f3f4f6;
-            --text-dim: #9ca3af;
-            --success: #34d399;
-            --error: #f87171;
-            --gold: #fbbf24;
-            --discord-color: #5865F2;
-            --discord-hover: #4752C4;
-        }
-
-        * { box-sizing: border-box; scroll-behavior: smooth; font-family: 'Plus Jakarta Sans', sans-serif; }
-
         body {
-            background-color: var(--bg-dark);
-            background-image: 
-                linear-gradient(rgba(56, 189, 248, 0.03) 1px, transparent 1px),
-                linear-gradient(90deg, rgba(56, 189, 248, 0.03) 1px, transparent 1px);
-            background-size: 40px 40px;
-            background-position: center;
-            color: var(--text-main);
+            background-color: #0f111a;
+            color: #e2e8f0;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
             margin: 0;
-            line-height: 1.7;
-            overflow-x: hidden;
         }
-
-        nav {
+        .container {
+            background-color: #1a1d2d;
+            padding: 40px;
+            border-radius: 12px;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.5);
+            width: 100%;
+            max-width: 400px;
+        }
+        h1 {
+            text-align: center;
+            margin-bottom: 30px;
+            color: #fff;
+            font-size: 24px;
+        }
+        .form-group {
+            margin-bottom: 20px;
+        }
+        label {
+            display: block;
+            margin-bottom: 8px;
+            font-size: 14px;
+            color: #a0aec0;
+        }
+        input {
+            width: 100%;
+            padding: 12px;
+            background-color: #0f111a;
+            border: 1px solid #2d3748;
+            border-radius: 6px;
+            color: #fff;
+            box-sizing: border-box;
+            outline: none;
+            transition: border-color 0.2s;
+        }
+        input:focus {
+            border-color: #4299e1;
+        }
+        button {
+            width: 100%;
+            padding: 14px;
+            background-color: #3182ce;
+            color: white;
+            border: none;
+            border-radius: 6px;
+            font-size: 16px;
+            font-weight: bold;
+            cursor: pointer;
+            transition: background-color 0.2s;
+        }
+        button:hover {
+            background-color: #2b6cb0;
+        }
+        button:disabled {
+            background-color: #4a5568;
+            cursor: not-allowed;
+        }
+        #result-panel {
+            display: none;
+            margin-top: 20px;
+            padding: 20px;
+            border-radius: 6px;
+            background-color: #222639;
+        }
+        .success-text { color: #48bb78; font-weight: bold; margin-bottom: 15px;}
+        .error-text { color: #f56565; margin-top: 15px; text-align: center; font-size: 14px;}
+        .info-row {
             display: flex;
             justify-content: space-between;
-            align-items: center;
-            padding: 18px 8%;
-            background: rgba(8, 11, 16, 0.75);
-            backdrop-filter: blur(16px);
-            -webkit-backdrop-filter: blur(16px);
-            border-bottom: 1px solid var(--card-border);
-            position: sticky;
-            top: 0;
-            z-index: 1000;
+            margin-bottom: 10px;
+            font-size: 14px;
+            border-bottom: 1px solid #2d3748;
+            padding-bottom: 5px;
         }
-
-        .logo { 
-            font-size: 1.4rem; 
-            font-weight: 800; 
-            color: #fff; 
-            letter-spacing: -0.5px; 
-            display: flex; 
-            align-items: center; 
-            gap: 12px; 
-        }
-        
-        .logo img {
-            width: 36px;
-            height: 36px;
-            border-radius: 10px;
-            object-fit: cover;
-            border: 2px solid var(--accent);
-            box-shadow: 0 0 15px rgba(56, 189, 248, 0.4);
-        }
-
-        .logo span {
-            background: linear-gradient(135deg, var(--accent) 0%, #a855f7 100%);
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-        }
-        
-        .nav-links { display: flex; align-items: center; gap: 30px; }
-        .nav-links a { color: var(--text-dim); text-decoration: none; font-size: 0.95rem; font-weight: 500; transition: 0.3s; }
-        .nav-links a:hover { color: var(--accent); }
-        
-        .status-badge { 
-            font-size: 0.8rem; 
-            font-weight: 600;
-            padding: 6px 14px; 
-            border-radius: 30px; 
-            background: rgba(52, 211, 153, 0.1); 
-            color: var(--success); 
-            border: 1px solid rgba(52, 211, 153, 0.2);
-            display: flex; align-items: center; gap: 8px;
-            box-shadow: 0 0 10px rgba(52, 211, 153, 0.05);
-        }
-        .status-dot { width: 8px; height: 8px; background: var(--success); border-radius: 50%; box-shadow: 0 0 10px var(--success); }
-
-        header { 
-            text-align: center; 
-            padding: 140px 20px 100px 20px; 
-            max-width: 900px; 
-            margin: 0 auto; 
-            position: relative;
-        }
-        
-        header::before {
-            content: "";
-            position: absolute;
-            top: 50px; left: 50%; transform: translateX(-50%);
-            width: 300px; height: 300px;
-            background: radial-gradient(circle, rgba(56, 189, 248, 0.12) 0%, transparent 70%);
-            filter: blur(30px);
-            z-index: -1;
-        }
-
-        header h1 { 
-            font-size: 3.8rem; 
-            font-weight: 800;
-            color: #fff; 
-            margin-bottom: 24px; 
-            line-height: 1.15; 
-            letter-spacing: -1.5px;
-        }
-        header h1 span {
-            background: linear-gradient(135deg, #38bdf8 0%, #818cf8 50%, #c084fc 100%);
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-        }
-        header p { color: var(--text-dim); font-size: 1.25rem; margin-bottom: 45px; max-width: 700px; margin-left: auto; margin-right: auto; }
-        
-        .cta-buttons { display: flex; justify-content: center; gap: 16px; flex-wrap: wrap; }
-        .btn { padding: 14px 32px; border-radius: 12px; text-decoration: none; font-weight: 600; font-size: 0.95rem; transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1); display: inline-flex; align-items: center; gap: 8px; cursor: pointer; border: none; }
-        .btn-primary { background: linear-gradient(135deg, var(--accent) 0%, #4f46e5 100%); color: #fff; box-shadow: 0 4px 20px rgba(56, 189, 248, 0.25); }
-        .btn-primary:hover { transform: translateY(-2px); box-shadow: 0 6px 24px rgba(56, 189, 248, 0.4); opacity: 0.95; }
-        .btn-secondary { background: rgba(255, 255, 255, 0.03); color: var(--text-main); border: 1px solid var(--card-border); backdrop-filter: blur(5px); }
-        .btn-secondary:hover { background: rgba(255, 255, 255, 0.08); border-color: var(--text-dim); transform: translateY(-2px); }
-        .btn-discord { background: var(--discord-color); color: #fff; box-shadow: 0 4px 15px rgba(88, 101, 242, 0.25); }
-        .btn-discord:hover { background: var(--discord-hover); transform: translateY(-2px); box-shadow: 0 6px 20px rgba(88, 101, 242, 0.4); }
-
-        .discord-section {
-            max-width: 1000px;
-            margin: -20px auto 80px auto;
-            padding: 0 20px;
-        }
-        .discord-panel {
-            background: linear-gradient(145deg, rgba(22, 28, 45, 0.8) 0%, rgba(13, 18, 30, 0.9) 100%);
-            border: 1px solid rgba(88, 101, 242, 0.3);
-            border-radius: 24px;
-            padding: 40px;
-            position: relative;
-            overflow: hidden;
-            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.5), inset 0 1px 1px rgba(255, 255, 255, 0.1);
-        }
-        .discord-panel::before {
-            content: ""; position: absolute; top: -100px; right: -100px; width: 300px; height: 300px;
-            background: radial-gradient(circle, rgba(88, 101, 242, 0.15) 0%, transparent 70%); filter: blur(40px);
-        }
-        .panel-grid {
-            display: grid;
-            grid-template-columns: 1fr 1.2fr;
-            gap: 40px;
-            align-items: center;
-        }
-        .panel-info h2 { font-size: 1.8rem; font-weight: 800; color: #fff; margin: 0 0 12px 0; }
-        .panel-info p { color: var(--text-dim); font-size: 0.95rem; margin: 0 0 25px 0; }
-        
-        .input-group { margin-bottom: 20px; }
-        .input-group label { display: block; color: var(--text-dim); font-size: 0.85rem; font-weight: 600; text-transform: uppercase; margin-bottom: 8px; letter-spacing: 0.5px; }
-        .input-field { width: 100%; background: rgba(5, 7, 12, 0.8); border: 1px solid var(--card-border); border-radius: 10px; padding: 12px 16px; color: #fff; font-family: 'JetBrains Mono', monospace; font-size: 0.95rem; transition: border-color 0.2s; }
-        .input-field:focus { outline: none; border-color: var(--accent); }
-
-        .dashboard-view {
-            background: #090d16;
-            border-radius: 16px;
-            border: 1px solid var(--card-border);
-            padding: 24px;
-            min-height: 250px;
-            display: flex;
-            flex-direction: column;
-            justify-content: center;
-        }
-        .login-trigger-view { text-align: center; }
-        .login-trigger-view i { font-size: 2.5rem; color: var(--discord-color); margin-bottom: 15px; display: block; }
-        
-        .data-item {
-            display: flex; justify-content: space-between; align-items: center;
-            padding: 12px 0; border-bottom: 1px solid rgba(255, 255, 255, 0.05);
-        }
-        .data-item:last-child { border: none; }
-        .data-label { color: var(--text-dim); font-size: 0.85rem; font-weight: 600; text-transform: uppercase; letter-spacing: 0.5px; }
-        .data-val { color: #fff; font-size: 0.95rem; font-weight: 700; font-family: 'JetBrains Mono', monospace; }
-        .token-wrapper { display: flex; align-items: center; gap: 8px; }
-        .token-blur { filter: blur(5px); user-select: none; pointer-events: none; opacity: 0.5; transition: filter 0.2s, opacity 0.2s; }
-        .token-blur.visible { filter: blur(0); opacity: 1; pointer-events: auto; user-select: text; }
-        .eye-btn { background: none; border: none; color: var(--accent); cursor: pointer; padding: 4px; font-size: 0.9rem; }
-        
-        .loader { display: none; text-align: center; color: var(--accent); }
-        .loader i { font-size: 2rem; animation: spin 1s linear infinite; }
-        @keyframes spin { 100% { transform: rotate(360deg); } }
-
-        section { padding: 90px 8%; border-top: 1px solid var(--card-border); position: relative; }
-        .section-title { text-align: center; margin-bottom: 60px; }
-        .section-title h2 { font-size: 2.2rem; font-weight: 800; color: #fff; margin-bottom: 12px; letter-spacing: -0.5px; }
-        .section-title p { color: var(--text-dim); font-size: 1.05rem; }
-
-        .features-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 30px; }
-        .feature-card { 
-            background: var(--card-bg); 
-            padding: 35px; 
-            border-radius: 16px; 
-            border: 1px solid var(--card-border); 
-            backdrop-filter: blur(5px);
-            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1); 
-        }
-        .feature-card:hover { transform: translateY(-6px); border-color: rgba(56, 189, 248, 0.4); box-shadow: 0 10px 30px rgba(56, 189, 248, 0.08); }
-        .icon-box { 
-            width: 48px; height: 48px; border-radius: 12px; background: rgba(56, 189, 248, 0.1); 
-            display: flex; align-items: center; justify-content: center; font-size: 1.4rem; color: var(--accent); margin-bottom: 24px; 
-            border: 1px solid rgba(56, 189, 248, 0.15);
-        }
-        .feature-card h3 { font-size: 1.25rem; font-weight: 700; color: #fff; margin: 0 0 12px 0; }
-        .feature-card p { color: var(--text-dim); font-size: 0.95rem; margin: 0; line-height: 1.6; }
-
-        .pricing-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(310px, 1fr));
-            gap: 30px;
-            max-width: 1150px;
-            margin: 0 auto;
-        }
-
-        .pricing-card { 
-            background: var(--card-bg); 
-            padding: 45px 35px; 
-            border-radius: 20px; 
-            border: 1px solid var(--card-border); 
-            backdrop-filter: blur(5px);
-            position: relative;
-            overflow: hidden;
-            display: flex;
-            flex-direction: column;
-            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-        }
-        .pricing-card:hover { transform: translateY(-4px); }
-        
-        .pricing-card.popular {
-            border-color: rgba(56, 189, 248, 0.5);
-            box-shadow: 0 15px 35px rgba(56, 189, 248, 0.12);
-            background: linear-gradient(180deg, rgba(56, 189, 248, 0.04) 0%, rgba(17, 24, 39, 0.7) 100%);
-        }
-        .popular-badge {
-            position: absolute; top: 16px; right: 16px; background: rgba(56, 189, 248, 0.15); border: 1px solid var(--accent);
-            color: var(--accent); font-size: 0.75rem; font-weight: 700; padding: 4px 10px; border-radius: 20px;
-        }
-
-        .pricing-card.enterprise { border-color: rgba(251, 191, 36, 0.4); box-shadow: 0 15px 35px rgba(251, 191, 36, 0.06); }
-        .enterprise-badge {
-            position: absolute; top: 16px; right: 16px; background: rgba(251, 191, 36, 0.15); border: 1px solid var(--gold);
-            color: var(--gold); font-size: 0.75rem; font-weight: 700; padding: 4px 10px; border-radius: 20px;
-        }
-
-        .pricing-card h3 { font-size: 1.4rem; font-weight: 700; color: #fff; margin: 0 0 8px 0; }
-        .price { font-size: 2.6rem; color: #fff; font-weight: 800; margin: 15px 0; letter-spacing: -1px; }
-        .price span { font-size: 0.95rem; color: var(--text-dim); font-weight: 500; letter-spacing: 0; }
-        .plan-desc { color: var(--text-dim); font-size: 0.9rem; margin: 0 0 25px 0; }
-        
-        .features-list { list-style: none; padding: 0; margin: 10px 0 35px 0; text-align: left; flex-grow: 1; }
-        .features-list li { margin-bottom: 14px; display: flex; align-items: center; gap: 12px; color: var(--text-main); font-size: 0.9rem; }
-        .features-list li i { font-size: 0.95rem; }
-        .features-list li i.fa-check { color: var(--success); }
-        .features-list li i.fa-xmark { color: var(--text-dim); opacity: 0.4; }
-
-        .doc-layout { display: grid; grid-template-columns: 1fr 1.4fr; gap: 40px; align-items: start; }
-        
-        .step-list { display: flex; flex-direction: column; gap: 16px; }
-        .step-item { background: rgba(17, 24, 39, 0.4); padding: 24px; border-radius: 16px; border: 1px solid var(--card-border); }
-        .step-badge { background: rgba(56, 189, 248, 0.1); border: 1px solid rgba(56, 189, 248, 0.2); color: var(--accent); padding: 4px 10px; border-radius: 6px; font-size: 0.75rem; font-weight: 700; margin-bottom: 12px; display: inline-block; }
-        .step-item h3 { font-size: 1.15rem; font-weight: 700; color: #fff; margin: 0 0 8px 0; }
-        .step-item p { color: var(--text-dim); font-size: 0.9rem; margin: 0; }
-
-        .code-window { border-radius: 16px; border: 1px solid var(--card-border); overflow: hidden; background: #05070c; box-shadow: 0 20px 40px rgba(0,0,0,0.6); }
-        .window-header { background: #0b0f19; padding: 14px 20px; display: flex; justify-content: space-between; border-bottom: 1px solid var(--card-border); color: var(--text-dim); font-size: 0.85rem; }
-        .window-dots { display: flex; gap: 6px; align-items: center; }
-        .dot { width: 10px; height: 10px; border-radius: 50%; background: rgba(255,255,255,0.15); }
-        .dot-red { background: #f87171; } .dot-yellow { background: #fbbf24; } .dot-green { background: #34d399; }
-        pre { margin: 0; padding: 15px; max-height: 520px; overflow-y: auto; }
-        code { font-family: 'JetBrains Mono', monospace !important; font-size: 0.85rem !important; }
-
-        .api-card { background: var(--card-bg); border: 1px solid var(--card-border); border-radius: 20px; padding: 35px; overflow-x: auto; }
-        .api-card h3 { color: #fff; margin: 0 0 25px 0; font-size: 1.3rem; font-weight: 700; display: flex; align-items: center; gap: 10px; }
-        .method-badge { background: rgba(56, 189, 248, 0.15); color: var(--accent); border: 1px solid rgba(56, 189, 248, 0.3); padding: 4px 10px; border-radius: 8px; font-size: 0.85rem; font-weight: 700; font-family: 'JetBrains Mono', monospace; }
-        
-        .api-table { width: 100%; border-collapse: collapse; min-width: 600px; }
-        .api-table th, .api-table td { text-align: left; padding: 16px; border-bottom: 1px solid var(--card-border); }
-        .api-table th { color: var(--text-dim); font-size: 0.85rem; font-weight: 600; text-transform: uppercase; letter-spacing: 0.5px; }
-        .badge { background: rgba(255, 255, 255, 0.05); color: #fff; padding: 4px 8px; border-radius: 6px; font-size: 0.8rem; font-family: 'JetBrains Mono', monospace; border: 1px solid rgba(255, 255, 255, 0.08); }
-
-        footer { padding: 50px 8% 40px 8%; border-top: 1px solid var(--card-border); text-align: center; color: var(--text-dim); font-size: 0.9rem; }
-        footer p { margin: 4px 0; }
-        
-        @media (max-width: 868px) {
-            .doc-layout, .panel-grid { grid-template-columns: 1fr; gap: 30px; }
-            header h1 { font-size: 2.6rem; }
-            nav { padding: 20px 4%; flex-direction: column; gap: 16px; }
+        .info-row span:last-child {
+            color: #63b3ed;
+            font-family: monospace;
         }
     </style>
 </head>
 <body>
 
-<nav>
-    <div class="logo">
-        <img src="https://api.kite.onl/v1/assets/myxut82o06ffyxgy" alt="Cat Logo">
-        Rank<span>Flow</span>
-    </div>
+<div class="container">
+    <h1>RankFlow Portal</h1>
     
-    <div class="nav-links">
-        <a href="#features">Features</a>
-        <a href="#pricing">Pricing</a>
-        <a href="#tutorials">Docs</a>
-        <a href="#api-docs">API Reference</a>
-        <div id="status-indicator" class="status-badge">
-            <div class="status-dot"></div> System Online
+    <div id="login-form">
+        <div class="form-group">
+            <label for="discord-id">Discord ID</label>
+            <input type="text" id="discord-id" placeholder="輸入您的 Discord ID">
         </div>
-    </div>
-</nav>
-
-<header>
-    <h1>Automate Your Roblox Group<br><span>In Seconds.</span></h1>
-    <p>The most reliable, secure, and blazing-fast ranking API designed for elite Roblox communities. Multi-tier infrastructure optimized for scale.</p>
-    <div class="cta-buttons">
-        <a href="#discord-portal" class="btn btn-discord"><i class="fab fa-discord"></i> Account Portal</a>
-        <a href="#tutorials" class="btn btn-secondary"><i class="fas fa-code"></i> Developer Docs</a>
-    </div>
-</header>
-
-<div class="discord-section" id="discord-portal">
-    <div class="discord-panel">
-        <div class="panel-grid">
-            <div class="panel-info">
-                <h2><i class="fab fa-discord" style="color: var(--discord-color); margin-right: 8px;"></i> Account Portal</h2>
-                <p>Manage everything securely! Please enter your Discord User ID and your generated Secret Token to authenticate your access to the database.</p>
-                
-                <div class="input-group">
-                    <label for="discord-id-field">Discord User ID</label>
-                    <input type="text" id="discord-id-field" class="input-field" placeholder="e.g., 952175146255417384">
-                </div>
-
-                <div class="input-group">
-                    <label for="portal-auth-token">Secret Token / GenKey</label>
-                    <input type="password" id="portal-auth-token" class="input-field" placeholder="Enter your secret key to authorize...">
-                </div>
-
-                <button onclick="fetchAccountData()" id="connect-btn" class="btn btn-discord" style="padding: 12px 24px; font-size: 0.9rem;"><i class="fas fa-lock-open"></i> Secure Authentication</button>
-            </div>
-            <div class="dashboard-view" id="dashboard-window">
-                <div class="login-trigger-view" id="portal-prompt">
-                    <i class="fas fa-user-shield"></i>
-                    <span style="color: var(--text-dim); font-size: 0.9rem;">Please enter your ID and Token to authorize secure sync verification</span>
-                </div>
-                <div class="loader" id="portal-loader">
-                    <i class="fas fa-circle-notch"></i>
-                    <p style="margin-top: 10px; font-size: 0.9rem; color: var(--text-dim);">Connecting to server endpoint...</p>
-                </div>
-                <div id="portal-data" style="display: none;">
-                    <div class="data-item">
-                        <span class="data-label">License Status</span>
-                        <span class="data-val" style="color: var(--success);"><i class="fas fa-check-circle"></i> Active / Authenticated</span>
-                    </div>
-                    <div class="data-item">
-                        <span class="data-label">Current Tier</span>
-                        <span class="data-val" id="portal-tier" style="color: var(--accent); font-weight: 800;">-</span>
-                    </div>
-                    <div class="data-item">
-                        <span class="data-label">Secret Token</span>
-                        <div class="token-wrapper">
-                            <span class="data-val token-blur" id="token-text">-</span>
-                            <button class="eye-btn" onclick="toggleToken()"><i id="eye-icon" class="fas fa-eye"></i></button>
-                        </div>
-                    </div>
-                    <div class="data-item">
-                        <span class="data-label">Expired Day</span>
-                        <span class="data-val" id="portal-expired" style="color: var(--gold);">-</span>
-                    </div>
-                </div>
-            </div>
+        <div class="form-group">
+            <label for="secret-token">Secret Token</label>
+            <input type="password" id="secret-token" placeholder="輸入您的授權金鑰">
         </div>
+        <button id="verify-btn" onclick="verifyLicense()">登入驗證</button>
+        <div id="error-msg" class="error-text"></div>
+    </div>
+
+    <div id="result-panel">
+        <div class="success-text">✅ Active / Authenticated</div>
+        <div class="info-row">
+            <span>Discord ID:</span>
+            <span id="res-discord"></span>
+        </div>
+        <div class="info-row">
+            <span>Subscription Tier:</span>
+            <span id="res-tier"></span>
+        </div>
+        <div class="info-row">
+            <span>Expiry Date:</span>
+            <span id="res-expiry"></span>
+        </div>
+        <div class="info-row" style="border-bottom: none;">
+            <span>Token Status:</span>
+            <span style="color: #48bb78;">Valid</span>
+        </div>
+        <button style="margin-top: 20px; background-color: #4a5568;" onclick="location.reload()">登出 / 重新驗證</button>
     </div>
 </div>
 
-<footer>
-    <p>&copy; 2026 RankFlow Platform. All engineering assets secured.</p>
-</footer>
-
-<script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/highlight.min.js"></script>
 <script>
-    hljs.highlightAll();
+    // 你的 Render 後端 API 網址
+    const API_ENDPOINT = 'https://rankflow-r1id.onrender.com/api/v2/portal/verify';
 
-    let isTokenVisible = false;
+    async function verifyLicense() {
+        const discordId = document.getElementById('discord-id').value.trim();
+        const secretToken = document.getElementById('secret-token').value.trim();
+        const errorMsg = document.getElementById('error-msg');
+        const btn = document.getElementById('verify-btn');
 
-    // 【核心修正】真實非同步對接後端 API 函數
-    async function fetchAccountData() {
-        const discordId = document.getElementById('discord-id-field').value.trim();
-        const authToken = document.getElementById('portal-auth-token').value.trim();
-        
-        const connectBtn = document.getElementById('connect-btn');
-        const promptView = document.getElementById('portal-prompt');
-        const loaderView = document.getElementById('portal-loader');
-        const dataView = document.getElementById('portal-data');
+        errorMsg.innerText = '';
 
-        if (!discordId || !authToken) {
-            alert('Please enter both Discord User ID and Secret Token.');
+        if (!discordId || !secretToken) {
+            errorMsg.innerText = '請完整輸入 Discord ID 與 Secret Token！';
             return;
         }
 
-        // 1. 開啟載入動畫
-        connectBtn.disabled = true;
-        connectBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Authenticating...';
-        promptView.style.display = 'none';
-        dataView.style.display = 'none';
-        loaderView.style.display = 'block';
-
-        // 🎯 這是你的後端驗證路由（請確保後端有寫好接收 POST 的 /api/v2/portal/verify 或對應路徑）
-        const API_ENDPOINT = 'https://rankflow-r1id.onrender.com/api/v2/portal/verify'; 
+        // 按鈕轉為載入狀態
+        btn.innerText = '驗證中...';
+        btn.disabled = true;
 
         try {
             const response = await fetch(API_ENDPOINT, {
@@ -433,78 +161,37 @@
                 headers: {
                     'Content-Type': 'application/json'
                 },
-                body: JSON.stringify({ 
-                    discord_id: discordId, 
-                    secret_token: authToken 
+                body: JSON.stringify({
+                    discord_id: discordId,
+                    secret_token: secretToken
                 })
             });
 
+            const data = await response.json();
+
             if (!response.ok) {
-                const errorData = await response.json().catch(() => ({}));
-                throw new Error(errorData.message || `Server responded with status ${response.status}`);
+                // 如果後端回傳 400 或 404，顯示錯誤訊息
+                throw new Error(data.message || data.error || '驗證失敗，請檢查資料是否正確');
             }
 
-            // 讀取後端從資料庫捞出來的真實 JSON
-            const resData = await response.json(); 
+            // 驗證成功！隱藏表單，顯示資料面板
+            document.getElementById('login-form').style.display = 'none';
+            document.getElementById('result-panel').style.display = 'block';
 
-            /* 💡 預期後端回傳結構需對應你的 PostgreSQL 欄位名稱，例如：
-              {
-                 "discord_id": "952175146255417384",
-                 "secret_token": "29d2f203-f42f-4734-a015-e35ae1a676a8",
-                 "tier": "STARTER",
-                 "expiry_date": "2026-07-20 12:13:02"  // 或為 null / "Permanent"
-              }
-            */
-
-            // 2. 渲染真實數據（❌ 絕不加任何 Bearer 前綴，完全還原資料庫原樣）
-            const displayTier = resData.tier ? `${resData.tier.toUpperCase()} PLAN` : "STARTER PLAN";
-            document.getElementById('portal-tier').innerText = displayTier;
-            document.getElementById('token-text').innerText = resData.secret_token || authToken;
-
-            // 3. 處理到期日格式化顯示
-            const expiryTextField = document.getElementById('portal-expired');
-            if (!resData.expiry_date || resData.expiry_date.toString().toLowerCase().includes('permanent')) {
-                expiryTextField.innerHTML = '<i class="far fa-calendar-alt"></i> Permanent';
-            } else {
-                // 如果是時間戳字串，優化成 YYYY-MM-DD 格式
-                const dateObj = new Date(resData.expiry_date);
-                const formattedDate = isNaN(dateObj.getTime()) ? resData.expiry_date : dateObj.toISOString().split('T')[0];
-                expiryTextField.innerHTML = `<i class="far fa-calendar-alt"></i> ${formattedDate}`;
-            }
-
-            // 4. 重設密碼眼遮罩狀態
-            isTokenVisible = false;
-            document.getElementById('token-text').classList.remove('visible');
-            document.getElementById('eye-icon').className = "fas fa-eye";
-
-            // 5. 顯示結果面板
-            loaderView.style.display = 'none';
-            dataView.style.display = 'block';
+            // 填入後端吐回來的真實資料
+            document.getElementById('res-discord').innerText = data.discord_id;
+            document.getElementById('res-tier').innerText = data.tier;
+            document.getElementById('res-expiry').innerText = data.expiry_date;
 
         } catch (error) {
-            console.error("API Error:", error);
-            alert('Authentication Error: ' + error.message);
-            loaderView.style.display = 'none';
-            promptView.style.display = 'block';
+            errorMsg.innerText = error.message;
         } finally {
-            // 還原按鈕
-            connectBtn.disabled = false;
-            connectBtn.innerHTML = '<i class="fas fa-lock-open"></i> Secure Authentication';
-        }
-    }
-
-    function toggleToken() {
-        const tokenText = document.getElementById('token-text');
-        const eyeIcon = document.getElementById('eye-icon');
-        isTokenVisible = !isTokenVisible;
-        if (isTokenVisible) {
-            tokenText.classList.add('visible');
-            eyeIcon.className = "fas fa-eye-slash";
-        } else {
-            tokenText.classList.remove('visible');
-            eyeIcon.className = "fas fa-eye";
+            // 恢復按鈕狀態
+            btn.innerText = '登入驗證';
+            btn.disabled = false;
         }
     }
 </script>
+
 </body>
 </html>
