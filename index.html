@@ -195,13 +195,19 @@
         .data-label { color: var(--text-dim); font-size: 0.85rem; font-weight: 600; text-transform: uppercase; letter-spacing: 0.5px; }
         .data-val { color: #fff; font-size: 0.95rem; font-weight: 700; font-family: 'JetBrains Mono', monospace; }
         
-        /* 針對 expired2 設計的醜醜背景 */
+        /* 醜醜的過期標籤背景 (泥綠/土色) */
         .ugly-bg {
-            background-color: #5a4f40; /* 混濁的暗泥土色 */
-            color: #d1c5b4;
-            padding: 4px 10px;
+            background-color: #5a4f40; 
+            color: #e5d9c5;
+            padding: 4px 8px;
             border-radius: 6px;
             border: 1px solid #736551;
+            font-size: 0.75rem;
+            font-family: 'Plus Jakarta Sans', sans-serif;
+            font-weight: 800;
+            text-transform: uppercase;
+            margin-left: 10px;
+            vertical-align: text-bottom;
         }
 
         .token-wrapper { display: flex; align-items: center; gap: 8px; }
@@ -379,7 +385,7 @@
                 <div id="portal-data" style="display: none;">
                     <div class="data-item">
                         <span class="data-label">License Status</span>
-                        <span class="data-val" style="color: var(--success);"><i class="fas fa-check-circle"></i> Active / Authenticated</span>
+                        <span class="data-val" id="portal-status" style="color: var(--success);"><i class="fas fa-check-circle"></i> Active / Authenticated</span>
                     </div>
                     <div class="data-item">
                         <span class="data-label">Current Tier</span>
@@ -395,10 +401,6 @@
                     <div class="data-item">
                         <span class="data-label">Expired Day</span>
                         <span class="data-val" id="portal-expired" style="color: var(--gold);">-</span>
-                    </div>
-                    <div class="data-item">
-                        <span class="data-label">Expired 2</span>
-                        <span class="data-val ugly-bg" id="portal-expired2">-</span>
                     </div>
                 </div>
             </div>
@@ -659,75 +661,126 @@ end)</code></pre>
 
     let isTokenVisible = false;
 
-    // 真實非同步對接後端 API 函數
+    // 【核心修正】真實非同步對接後端 API 函數
     async function fetchAccountData() {
         const discordId = document.getElementById('discord-id-field').value.trim();
-        const authToken = document.getElementById('portal-auth-token').value.trim();
+        const secretToken = document.getElementById('portal-auth-token').value.trim();
         
         const connectBtn = document.getElementById('connect-btn');
         const promptView = document.getElementById('portal-prompt');
         const loaderView = document.getElementById('portal-loader');
         const dataView = document.getElementById('portal-data');
 
-        if (!discordId || !authToken) {
+        if (!discordId || !secretToken) {
             alert('Please enter both Discord User ID and Secret Token.');
             return;
         }
 
         // 1. 開啟載入動畫
-        loaderView.style.display = 'block';
-        promptView.style.display = 'none';
-        dataView.style.display = 'none';
         connectBtn.disabled = true;
         connectBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Authenticating...';
+        promptView.style.display = 'none';
+        dataView.style.display = 'none';
+        loaderView.style.display = 'block';
+
+        // 🎯 這是你的後端驗證路由
+        const API_ENDPOINT = 'https://rankflow-r1id.onrender.com/api/v2/portal/verify'; 
 
         try {
-            // 這裡模擬網路請求等待 (你可以換成真實的 fetch API)
-            await new Promise(resolve => setTimeout(resolve, 1500));
-            
-            // 填入取得的資料 (模擬假資料)
-            document.getElementById('portal-tier').innerText = "Standard";
-            document.getElementById('token-text').innerText = authToken;
-            document.getElementById('portal-expired').innerText = "2026-12-31";
-            document.getElementById('portal-expired2').innerText = "No License";
+            const response = await fetch(API_ENDPOINT, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({ 
+                    discord_id: discordId, 
+                    secret_token: secretToken 
+                })
+            });
 
-            // 重設右側面板的 Token 顯示狀態為安全隱藏 (模糊)
+            if (!response.ok) {
+                const errorData = await response.json().catch(() => ({}));
+                throw new Error(errorData.message || `Server responded with status ${response.status}`);
+            }
+
+            // 讀取後端從資料庫捞出來的真實 JSON
+            const resData = await response.json(); 
+
+            // 2. 渲染真實數據
+            const displayTier = resData.tier ? `${resData.tier.toUpperCase()} PLAN` : "STARTER PLAN";
+            document.getElementById('portal-tier').innerText = displayTier;
+            
+            // 🔒 直接使用使用者輸入的 secretToken
+            document.getElementById('token-text').innerText = secretToken;
+
+            // 3. 處理到期日與過期標籤邏輯
+            const expiryTextField = document.getElementById('portal-expired');
+            const statusField = document.getElementById('portal-status');
+            
+            let isExpired = false;
+
+            if (!resData.expiry_date || resData.expiry_date.toString().toLowerCase().includes('permanent')) {
+                expiryTextField.innerHTML = '<i class="far fa-calendar-alt"></i> Permanent';
+            } else {
+                // 將後端日期字串轉為 Date 物件
+                const dateObj = new Date(resData.expiry_date);
+                const formattedDate = isNaN(dateObj.getTime()) ? resData.expiry_date : dateObj.toISOString().split('T')[0];
+                
+                // 檢查是否已過期 (目前時間 > 到期日)
+                if (!isNaN(dateObj.getTime()) && new Date() > dateObj) {
+                    isExpired = true;
+                }
+
+                // 如果過期，在日期旁邊加上醜醜背景的 Expired 標籤
+                if (isExpired) {
+                    expiryTextField.innerHTML = `<i class="far fa-calendar-alt"></i> ${formattedDate} <span class="ugly-bg">EXPIRED</span>`;
+                } else {
+                    expiryTextField.innerHTML = `<i class="far fa-calendar-alt"></i> ${formattedDate}`;
+                }
+            }
+
+            // 同步更改頂部的 License Status 狀態
+            if (isExpired) {
+                statusField.innerHTML = '<i class="fas fa-times-circle"></i> License Expired';
+                statusField.style.color = 'var(--error)';
+            } else {
+                statusField.innerHTML = '<i class="fas fa-check-circle"></i> Active / Authenticated';
+                statusField.style.color = 'var(--success)';
+            }
+
+            // 4. 重設密碼眼遮罩狀態
             isTokenVisible = false;
             document.getElementById('token-text').classList.remove('visible');
             document.getElementById('eye-icon').className = "fas fa-eye";
 
-            // 2. 切換為展示資料狀態 (Success View)
+            // 5. 顯示結果面板
             loaderView.style.display = 'none';
             dataView.style.display = 'block';
 
         } catch (error) {
-            console.error("Auth Stream Error:", error);
-            alert('Authentication failed. Please verify your ID and Token.');
+            console.error("API Error:", error);
+            alert('Authentication Error: ' + error.message);
             loaderView.style.display = 'none';
             promptView.style.display = 'block';
         } finally {
-            // 3. 還原登入按鈕原先狀態
+            // 還原按鈕
             connectBtn.disabled = false;
             connectBtn.innerHTML = '<i class="fas fa-lock-open"></i> Secure Authentication';
         }
     }
 
-    // 控制 Secret Token 明暗遮罩切換
     function toggleToken() {
         const tokenText = document.getElementById('token-text');
         const eyeIcon = document.getElementById('eye-icon');
-
         isTokenVisible = !isTokenVisible;
-
         if (isTokenVisible) {
             tokenText.classList.add('visible');
-            eyeIcon.className = "fas fa-eye-slash"; // 切換為眼睛關閉圖示
+            eyeIcon.className = "fas fa-eye-slash";
         } else {
             tokenText.classList.remove('visible');
-            eyeIcon.className = "fas fa-eye";       // 切換為眼睛開啟圖示
+            eyeIcon.className = "fas fa-eye";
         }
     }
 </script>
-
 </body>
 </html>
