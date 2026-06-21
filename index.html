@@ -179,7 +179,7 @@
             border-radius: 16px;
             border: 1px solid var(--card-border);
             padding: 24px;
-            min-height: 180px;
+            min-height: 250px;
             display: flex;
             flex-direction: column;
             justify-content: center;
@@ -343,34 +343,40 @@
         <div class="panel-grid">
             <div class="panel-info">
                 <h2><i class="fab fa-discord" style="color: var(--discord-color); margin-right: 8px;"></i> Account Portal</h2>
-                <p>Manage everything without leaving the page! Enter your Discord User ID to securely view your database token authorization keys and remaining license duration instantly.</p>
+                <p>Manage everything securely! Please enter your Discord User ID and your generated Secret Token to authenticate your access to the database.</p>
                 
                 <div class="input-group">
                     <label for="discord-id-field">Discord User ID</label>
-                    <input type="text" id="discord-id-field" class="input-field" placeholder="Enter Discord User ID (e.g., 4567890123...)">
+                    <input type="text" id="discord-id-field" class="input-field" placeholder="e.g., 4567890123...">
                 </div>
-                <button onclick="fetchAccountData()" id="connect-btn" class="btn btn-discord" style="padding: 12px 24px; font-size: 0.9rem;"><i class="fas fa-search"></i> Fetch Portal Data</button>
+
+                <div class="input-group">
+                    <label for="portal-auth-token">Secret Token / GenKey</label>
+                    <input type="password" id="portal-auth-token" class="input-field" placeholder="Enter your secret key to authorize...">
+                </div>
+
+                <button onclick="fetchAccountData()" id="connect-btn" class="btn btn-discord" style="padding: 12px 24px; font-size: 0.9rem;"><i class="fas fa-lock-open"></i> Secure Authentication</button>
             </div>
             <div class="dashboard-view" id="dashboard-window">
                 <div class="login-trigger-view" id="portal-prompt">
                     <i class="fas fa-user-shield"></i>
-                    <span style="color: var(--text-dim); font-size: 0.9rem;">Please enter your ID on the left to authorize secure sync verification</span>
+                    <span style="color: var(--text-dim); font-size: 0.9rem;">Please enter your ID and Token to authorize secure sync verification</span>
                 </div>
                 <div class="loader" id="portal-loader">
                     <i class="fas fa-circle-notch"></i>
-                    <p style="margin-top: 10px; font-size: 0.9rem; color: var(--text-dim);">Securely fetching database streams from Neon PostgreSQL...</p>
+                    <p style="margin-top: 10px; font-size: 0.9rem; color: var(--text-dim);">Verifying token signatures & mapping PostgreSQL streams...</p>
                 </div>
                 <div id="portal-data" style="display: none;">
                     <div class="data-item">
                         <span class="data-label">License Status</span>
-                        <span class="data-val" style="color: var(--success);"><i class="fas fa-check-circle"></i> Active / Authenticated</span>
+                        <span class="data-val" style="color: var(--success);"><i class="fas fa-check-circle"></i> Authenticated</span>
                     </div>
                     <div class="data-item">
                         <span class="data-label">Current Tier</span>
                         <span class="data-val" id="portal-tier" style="color: var(--accent); font-weight: 800;">-</span>
                     </div>
                     <div class="data-item">
-                        <span class="data-label">Secret Token</span>
+                        <span class="data-label">Verified Token</span>
                         <div class="token-wrapper">
                             <span class="data-val token-blur" id="token-text">-</span>
                             <button class="eye-btn" onclick="toggleToken()"><i id="eye-icon" class="fas fa-eye"></i></button>
@@ -499,7 +505,7 @@ local Players = game:GetService("Players")
 -- --- [A] Parameter Settings Configuration ---
 local API_URL = "https://rankflow-r1id.onrender.com/api/v2/rank/update" 
 local WEBHOOK_URL = "YOUR_DISCORD_WEBHOOK_HERE"
-local SECRET_TOKEN = "OUR_SECRET_TOKEN_HERE" -- Please ensure "Bearer " prefix is preserved if required by backend
+local SECRET_TOKEN = "OUR_SECRET_TOKEN_HERE" 
 
 local ADMIN_ID =  -- Alternative administrative fall-back User ID
 local GROUP_ID =    -- Your Roblox Group ID
@@ -641,45 +647,56 @@ end)</code></pre>
     // 全域變數：控制 Token 明暗狀態
     let isTokenVisible = false;
 
-    // 非同步發送請求與面板狀態控制機制
+    // 非同步發送請求與面板狀態控制機制（已整合雙重認證欄位）
     async function fetchAccountData() {
         const discordId = document.getElementById('discord-id-field').value.trim();
+        const authToken = document.getElementById('portal-auth-token').value.trim(); // 新增：獲取輸入的 Token
+        
         const connectBtn = document.getElementById('connect-btn');
         const promptView = document.getElementById('portal-prompt');
         const loaderView = document.getElementById('portal-loader');
         const dataView = document.getElementById('portal-data');
 
-        if (!discordId) {
-            alert('Please enter a valid Discord User ID.');
+        // 雙重欄位空值驗證
+        if (!discordId || !authToken) {
+            alert('Please enter both Discord User ID and Secret Token to verify authentication.');
             return;
         }
 
         // 1. 進入加載狀態 (Loading)
         connectBtn.disabled = true;
-        connectBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Fetching...';
+        connectBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Authenticating...';
         promptView.style.display = 'none';
         dataView.style.display = 'none';
         loaderView.style.display = 'block';
 
         try {
-            /* 【正式環境串接指引】
-               若未來後端 API 建立完成，請將下方 setTimeout 區塊換成實際的 Fetch 請求：
+            /* 【正式後端 API 串接指引說明】
+               當你架設好 Node.js 或 Python 後端時，請用以下程式碼替換下方的模擬區塊：
                
-               const response = await fetch(`https://your-api-domain.com/api/user/${discordId}`);
-               if (!response.ok) throw new Error('User not found');
+               const response = await fetch(`https://your-api-domain.com/api/user/portal`, {
+                   method: 'POST',
+                   headers: {
+                       'Content-Type': 'application/json',
+                       'Authorization': `Bearer ${authToken}` // 將使用者輸入的 Token 帶入 Header
+                   },
+                   body: JSON.stringify({ discordId: discordId })
+               });
+               
+               if (!response.ok) throw new Error('Unauthorized or Invalid credentials');
                const resData = await response.json();
                
                document.getElementById('portal-tier').innerText = resData.tier;
-               document.getElementById('token-text').innerText = "Bearer " + resData.token;
+               document.getElementById('token-text').innerText = resData.token;
                document.getElementById('portal-expired').innerText = resData.expiredDay;
             */
 
-            // 模擬向 PostgreSQL / Neon 網路請求的 1.2 秒延遲
+            // 模擬向數據庫發送安全驗證請求的 1.2 秒延遲
             await new Promise(resolve => setTimeout(resolve, 1200));
 
-            // 模擬動態資料呈現 (依據輸入 ID 長度隨機配給 Plan，以便測試 UI)
+            // 模擬驗證成功後的動態展示 (此處將使用者輸入的 Token 渲染回畫面上證明驗證通過)
             const mockTier = discordId.length % 2 === 0 ? "Enterprise Plan" : "Standard Plan";
-            const mockToken = "Bearer rf_" + btoa(discordId).substring(0, 16) + "...";
+            const mockToken = authToken.startsWith("Bearer ") ? authToken : "Bearer " + authToken;
             const mockExpire = "2026-12-31";
 
             // 注入資料到 DOM
@@ -687,7 +704,7 @@ end)</code></pre>
             document.getElementById('token-text').innerText = mockToken;
             document.getElementById('portal-expired').innerText = mockExpire;
 
-            // 重設 Token 顯示狀態為隱藏
+            // 重設右側面板的 Token 顯示狀態為安全隱藏 (模糊)
             isTokenVisible = false;
             document.getElementById('token-text').classList.remove('visible');
             document.getElementById('eye-icon').className = "fas fa-eye";
@@ -697,14 +714,14 @@ end)</code></pre>
             dataView.style.display = 'block';
 
         } catch (error) {
-            console.error("Database Stream Error:", error);
-            alert('Failed to retrieve tokens. Ensure the Discord ID is authenticated.');
+            console.error("Auth Stream Error:", error);
+            alert('Authentication failed. Please verify your ID and Token.');
             loaderView.style.display = 'none';
             promptView.style.display = 'block';
         } finally {
-            // 3. 還原按鈕原先狀態
+            // 3. 還原登入按鈕原先狀態
             connectBtn.disabled = false;
-            connectBtn.innerHTML = '<i class="fas fa-search"></i> Fetch Portal Data';
+            connectBtn.innerHTML = '<i class="fas fa-lock-open"></i> Secure Authentication';
         }
     }
 
