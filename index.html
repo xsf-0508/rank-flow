@@ -194,6 +194,16 @@
         .data-item:last-child { border: none; }
         .data-label { color: var(--text-dim); font-size: 0.85rem; font-weight: 600; text-transform: uppercase; letter-spacing: 0.5px; }
         .data-val { color: #fff; font-size: 0.95rem; font-weight: 700; font-family: 'JetBrains Mono', monospace; }
+        
+        /* 針對 expired2 設計的醜醜背景 */
+        .ugly-bg {
+            background-color: #5a4f40; /* 混濁的暗泥土色 */
+            color: #d1c5b4;
+            padding: 4px 10px;
+            border-radius: 6px;
+            border: 1px solid #736551;
+        }
+
         .token-wrapper { display: flex; align-items: center; gap: 8px; }
         .token-blur { filter: blur(5px); user-select: none; pointer-events: none; opacity: 0.5; transition: filter 0.2s, opacity 0.2s; }
         .token-blur.visible { filter: blur(0); opacity: 1; pointer-events: auto; user-select: text; }
@@ -386,6 +396,10 @@
                         <span class="data-label">Expired Day</span>
                         <span class="data-val" id="portal-expired" style="color: var(--gold);">-</span>
                     </div>
+                    <div class="data-item">
+                        <span class="data-label">Expired 2</span>
+                        <span class="data-val ugly-bg" id="portal-expired2">-</span>
+                    </div>
                 </div>
             </div>
         </div>
@@ -515,80 +529,80 @@ local cooldowns = {}
 
 -- --- [B] Webhook Log Transmission ---
 local function sendWebhook(adminPlayer: Player, targetName: string, action: string)
-	local data = {
-		["embeds"] = {{
-			["title"] = "🛠️ Rank Management Log",
-			["fields"] = {
-				{["name"] = "Admin", ["value"] = adminPlayer.Name, ["inline"] = true},
-				{["name"] = "Target", ["value"] = targetName, ["inline"] = true},
-				{["name"] = "Action", ["value"] = action:upper(), ["inline"] = true}
-			},
-			["color"] = action == "promote" and 65280 or 16711680,
-			["footer"] = {["text"] = "RankFlow System • " .. os.date("%X")}
-		}}
-	}
-	pcall(function()
-		HttpService:PostAsync(WEBHOOK_URL, HttpService:JSONEncode(data))
-	end)
+    local data = {
+        ["embeds"] = {{
+            ["title"] = "🛠️ Rank Management Log",
+            ["fields"] = {
+                {["name"] = "Admin", ["value"] = adminPlayer.Name, ["inline"] = true},
+                {["name"] = "Target", ["value"] = targetName, ["inline"] = true},
+                {["name"] = "Action", ["value"] = action:upper(), ["inline"] = true}
+            },
+            ["color"] = action == "promote" and 65280 or 16711680,
+            ["footer"] = {["text"] = "RankFlow System • " .. os.date("%X")}
+        }}
+    }
+    pcall(function()
+        HttpService:PostAsync(WEBHOOK_URL, HttpService:JSONEncode(data))
+    end)
 end
 
 -- --- [C] Invoke Render Endpoint API ---
 local function callRankApi(targetId: number, action: string)
-	local data = { userId = targetId, action = action }
-	local success, response = pcall(function()
-		return HttpService:RequestAsync({
-			Url = API_URL,
-			Method = "POST",
-			Headers = {
-				["Content-Type"] = "application/json",
-				["Authorization"] = SECRET_TOKEN
-			},
-			Body = HttpService:JSONEncode(data)
-		})
-	end)
-	if success and response and response.StatusCode == 200 then
-		return true
-	else
-		warn("❌ Rank API Error: " .. (response and response.Body or "No response received"))
-		return false
-	end
+    local data = { userId = targetId, action = action }
+    local success, response = pcall(function()
+        return HttpService:RequestAsync({
+            Url = API_URL,
+            Method = "POST",
+            Headers = {
+                ["Content-Type"] = "application/json",
+                ["Authorization"] = SECRET_TOKEN
+            },
+            Body = HttpService:JSONEncode(data)
+        })
+    end)
+    if success and response and response.StatusCode == 200 then
+        return true
+    else
+        warn("❌ Rank API Error: " .. (response and response.Body or "No response received"))
+        return false
+    end
 end
 
 -- --- [D] Player Message Chat Listener ---
 Players.PlayerAdded:Connect(function(player)
-	player.Chatted:Connect(function(msg)
-		local hasPermission = false
-		pcall(function()
-			if player:GetRankInGroup(GROUP_ID) >= MIN_RANK or player.UserId == ADMIN_ID then
-				hasPermission = true
-			end
-		end)
-		if not hasPermission then return end
-		if cooldowns[player.UserId] and tick() - cooldowns[player.UserId] < 5 then return end
+    player.Chatted:Connect(function(msg)
+        local hasPermission = false
+        pcall(function()
+            if player:GetRankInGroup(GROUP_ID) >= MIN_RANK or player.UserId == ADMIN_ID then
+                hasPermission = true
+            end
+        end)
+        if not hasPermission then return end
+        if cooldowns[player.UserId] and tick() - cooldowns[player.UserId] < 5 then return end
 
-		local args = string.split(msg, " ")
-		local cmd = args[1]:lower()
-		local targetName = args[2]
+        local args = string.split(msg, " ")
+        local cmd = args[1]:lower()
+        local targetName = args[2]
 
-		if (cmd == "!promote" or cmd == "!demote") and targetName then
-			cooldowns[player.UserId] = tick()
-			local cleanCmd = cmd:sub(2)
+        if (cmd == "!promote" or cmd == "!demote") and targetName then
+            cooldowns[player.UserId] = tick()
+            local cleanCmd = cmd:sub(2)
 
-			local getSuccess, targetUserId = pcall(function()
-				return Players:GetUserIdFromNameAsync(targetName)
-			end)
+            local getSuccess, targetUserId = pcall(function()
+                return Players:GetUserIdFromNameAsync(targetName)
+            end)
 
-			if getSuccess and targetUserId then
-				local apiSuccess = callRankApi(targetUserId, cleanCmd)
-				if apiSuccess then
-					sendWebhook(player, targetName, cleanCmd)
-					print("Successfully updated rank structure for " .. targetName)
-				end
-			else
-				warn("❌ User non-existent: " .. tostring(targetName))
-			end
-		end
-	end)
+            if getSuccess and targetUserId then
+                local apiSuccess = callRankApi(targetUserId, cleanCmd)
+                if apiSuccess then
+                    sendWebhook(player, targetName, cleanCmd)
+                    print("Successfully updated rank structure for " .. targetName)
+                end
+            else
+                warn("❌ User non-existent: " .. tostring(targetName))
+            end
+        end
+    end)
 end)</code></pre>
         </div>
     </div>
@@ -645,7 +659,7 @@ end)</code></pre>
 
     let isTokenVisible = false;
 
-    // 【核心修正】真實非同步對接後端 API 函數
+    // 真實非同步對接後端 API 函數
     async function fetchAccountData() {
         const discordId = document.getElementById('discord-id-field').value.trim();
         const authToken = document.getElementById('portal-auth-token').value.trim();
@@ -661,86 +675,59 @@ end)</code></pre>
         }
 
         // 1. 開啟載入動畫
-        connectBtn.disabled = true;
-        connectBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Authenticating...';
+        loaderView.style.display = 'block';
         promptView.style.display = 'none';
         dataView.style.display = 'none';
-        loaderView.style.display = 'block';
-
-        // 🎯 這是你的後端驗證路由（請確保後端有寫好接收 POST 的 /api/v2/portal/verify 或對應路徑）
-        const API_ENDPOINT = 'https://rankflow-r1id.onrender.com/api/v2/portal/verify'; 
+        connectBtn.disabled = true;
+        connectBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Authenticating...';
 
         try {
-            const response = await fetch(API_ENDPOINT, {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json'
-                },
-                body: JSON.stringify({ 
-                    discord_id: discordId, 
-                    secret_token: authToken 
-                })
-            });
-
-            if (!response.ok) {
-                const errorData = await response.json().catch(() => ({}));
-                throw new Error(errorData.message || `Server responded with status ${response.status}`);
-            }
-
-            // 讀取後端從資料庫捞出來的真實 JSON
-            const resData = await response.json(); 
-
-            // 2. 渲染真實數據
-            const displayTier = resData.tier ? `${resData.tier.toUpperCase()} PLAN` : "STARTER PLAN";
-            document.getElementById('portal-tier').innerText = displayTier;
+            // 這裡模擬網路請求等待 (你可以換成真實的 fetch API)
+            await new Promise(resolve => setTimeout(resolve, 1500));
             
-            // 🔒 安全修正：直接使用使用者輸入的 authToken，不要依賴後端回傳敏感資料，也沒有 Bearer
+            // 填入取得的資料 (模擬假資料)
+            document.getElementById('portal-tier').innerText = "Standard";
             document.getElementById('token-text').innerText = authToken;
+            document.getElementById('portal-expired').innerText = "2026-12-31";
+            document.getElementById('portal-expired2').innerText = "No License";
 
-            // 3. 處理到期日格式化顯示
-            const expiryTextField = document.getElementById('portal-expired');
-            if (!resData.expiry_date || resData.expiry_date.toString().toLowerCase().includes('permanent')) {
-                expiryTextField.innerHTML = '<i class="far fa-calendar-alt"></i> Permanent';
-            } else {
-                // 如果是時間戳字串，優化成 YYYY-MM-DD 格式
-                const dateObj = new Date(resData.expiry_date);
-                const formattedDate = isNaN(dateObj.getTime()) ? resData.expiry_date : dateObj.toISOString().split('T')[0];
-                expiryTextField.innerHTML = `<i class="far fa-calendar-alt"></i> ${formattedDate}`;
-            }
-
-            // 4. 重設密碼眼遮罩狀態
+            // 重設右側面板的 Token 顯示狀態為安全隱藏 (模糊)
             isTokenVisible = false;
             document.getElementById('token-text').classList.remove('visible');
             document.getElementById('eye-icon').className = "fas fa-eye";
 
-            // 5. 顯示結果面板
+            // 2. 切換為展示資料狀態 (Success View)
             loaderView.style.display = 'none';
             dataView.style.display = 'block';
 
         } catch (error) {
-            console.error("API Error:", error);
-            alert('Authentication Error: ' + error.message);
+            console.error("Auth Stream Error:", error);
+            alert('Authentication failed. Please verify your ID and Token.');
             loaderView.style.display = 'none';
             promptView.style.display = 'block';
         } finally {
-            // 還原按鈕
+            // 3. 還原登入按鈕原先狀態
             connectBtn.disabled = false;
             connectBtn.innerHTML = '<i class="fas fa-lock-open"></i> Secure Authentication';
         }
     }
 
+    // 控制 Secret Token 明暗遮罩切換
     function toggleToken() {
         const tokenText = document.getElementById('token-text');
         const eyeIcon = document.getElementById('eye-icon');
+
         isTokenVisible = !isTokenVisible;
+
         if (isTokenVisible) {
             tokenText.classList.add('visible');
-            eyeIcon.className = "fas fa-eye-slash";
+            eyeIcon.className = "fas fa-eye-slash"; // 切換為眼睛關閉圖示
         } else {
             tokenText.classList.remove('visible');
-            eyeIcon.className = "fas fa-eye";
+            eyeIcon.className = "fas fa-eye";       // 切換為眼睛開啟圖示
         }
     }
 </script>
+
 </body>
 </html>
